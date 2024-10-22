@@ -1,0 +1,40 @@
+.custom-navbar {
+  background-color: #4CAF50 !important; /* Màu xanh lá cây cho nông trại */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000; /* Navbar sẽ nằm trên các phần khác */
+  width: calc(100% - 250px); /* Đặt độ rộng để không đè lên sidebar */
+  margin-left: 250px; /* Dịch sang phải bằng đúng độ rộng của sidebar */
+}
+
+.nav-link {
+  color: #fff !important;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+  color: #C8E6C9 !important; /* Tông màu nhạt khi hover */
+}
+
+.notification-badge {
+  position: absolute;
+  top: -5px;
+  right: -10px;
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  padding: 3px 6px;
+  font-size: 0.75rem;
+}
+
+@media (max-width: 992px) {
+  .custom-navbar {
+    width: 100%; /* Ở màn hình nhỏ, Navbar sẽ chiếm toàn bộ chiều ngang */
+    margin-left: 0; /* Không cần khoảng trống bên trái ở màn hình nhỏ */
+  }
+
+  .nav-link {
+    font-size: 0.9rem;
+  }
+}
