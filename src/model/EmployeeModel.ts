@@ -1,8 +1,7 @@
 class EmployeeModel{
     id?:number;
     employeeId : number;
-    firstName : string;
-    lastName : string;
+    fullName : string;
     username : string;
     password : string;
     address : string;
@@ -12,8 +11,7 @@ class EmployeeModel{
     role ?: number;
     joinDate : string;
     constructor(employeeId : number,
-        firstName : string,
-        lastName : string,
+        fullName : string,
         username : string,
         password : string,
         address : string,
@@ -23,8 +21,7 @@ class EmployeeModel{
         email : string
         ){
             this.employeeId=employeeId;
-            this.firstName=firstName;
-            this.lastName=lastName;
+            this.fullName=fullName;
             this.username=username;
             this.password=password;
             this.address=address;

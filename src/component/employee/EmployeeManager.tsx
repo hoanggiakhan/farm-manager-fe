@@ -31,7 +31,7 @@ const EmployeeManagement: React.FC = () => {
   }
 
   const filteredEmployees = employees.filter(employee => {
-    const fullName = `${employee.firstName} ${employee.lastName}`.toLowerCase();
+    const fullName = employee.fullName.toLowerCase();
     return (
       fullName.includes(searchTerm.toLowerCase()) ||
       employee.age.toString().includes(searchTerm)
@@ -71,7 +71,7 @@ const EmployeeManagement: React.FC = () => {
           {filteredEmployees.map((employee, index) => (
             <tr key={index}>
               <td>{employee.employeeId}</td>
-              <td>{employee.firstName} {employee.lastName}</td>
+              <td>{employee.fullName}</td>
               <td>{employee.age}</td>
               <td>{employee.address}</td>
               <td>{employee.phoneNumber}</td>

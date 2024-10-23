@@ -29,6 +29,7 @@ import { getAllCrop } from './api/CropApi';
 import PrivateRoute from './utils/PrivateRoute';
 import { DataProvider } from './utils/DataContext';
 import TaskList from './component/task/TaskList';
+import FarmRegistrationForm from './page/FarmRegister';
 
 
 const App: React.FC = () => {
@@ -41,7 +42,7 @@ const App: React.FC = () => {
           <Routes>
             <Route path='/' element={<HomePage />} />
             <Route path='/login' element={<Login />} />
-
+            <Route path='register' element={<FarmRegistrationForm/>}/>
             {/* Layout for pages with sidebar and navbar */}
             <Route
               path='/app'

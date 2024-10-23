@@ -5,7 +5,7 @@ import { getIdUserByToken } from '../../utils/JwtService';
 import EmployeeModel from '../../model/EmployeeModel';
 
 interface UserProfileData {
-  name: string;
+  fullName: string;
   email: string;
   phone: string;
   // profilePicture: string;
@@ -26,7 +26,7 @@ const UserProfile: React.FC = () => {
       .then((response) => {
         setUserData(response);
         setTempUserData({
-          name: `${response.lastName} ${response.firstName}`,
+          fullName : response.fullName,
           email: response.address,
           phone: response.phoneNumber,
           // profilePicture: response.profilePicture || '',
@@ -78,8 +78,7 @@ const UserProfile: React.FC = () => {
     if (tempUserData) {
       setUserData({
         ...userData!,
-        lastName: tempUserData.name.split(' ')[0],
-        firstName: tempUserData.name.split(' ')[1],
+        fullName : tempUserData.fullName,
         address: tempUserData.email,
         phoneNumber: tempUserData.phone,
         // profilePicture: tempUserData.profilePicture,
@@ -120,7 +119,7 @@ const UserProfile: React.FC = () => {
                   <Form.Control
                     type="text"
                     name="name"
-                    value={tempUserData?.name || ''}
+                    value={tempUserData?.fullName || ''}
                     onChange={handleInputChange}
                     disabled={!editing}
                   />

@@ -3,12 +3,10 @@ import { Button, Form, Modal } from "react-bootstrap";
 import ItemModel from "../../model/ItemModel";
 import TaskModel from "../../model/TaskModel";
 interface TaskProps{
-    show : any;
-    setShow : any;
+    show : boolean;
     newTask : TaskModel;
     setNewTask : any;
     handleClose : any;
-    handleShow : any;
     handleAddTask : any;
 }
 export const TaskModal : React.FC<TaskProps> = ({handleAddTask,show,newTask,handleClose,setNewTask,})=>{

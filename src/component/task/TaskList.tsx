@@ -17,6 +17,15 @@ const TaskList: React.FC = () => {
   const [tasks, setTasks] = useState<TaskModel[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<null | Error>(null);
+  const [show, setShow] = useState(false);
+  const [newTask, setNewTask] = useState<TaskModel>({
+    taskId : 0,
+    title : '',
+    description : '',
+    date : '',
+    status : 0,
+   nameEmployee : '',
+  });
   const userId = getIdUserByToken();
   useEffect(() => {
     getAllTask(userId)
@@ -37,35 +46,25 @@ const TaskList: React.FC = () => {
   if (error) {
     return <div>Error: {error.message}</div>;
   }
-  const [show, setShow] = useState(false);
-  const [newTask, setNewTask] = useState<TaskModel>({
-    taskId : 0,
-    title : '',
-    description : '',
-   date : '',
-    status : 0,
-   nameEmployee : '',
-  });
-
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
   const handleAddTask = () => {
-    if (newTask.title && newTask.description && newTask.dueDate) {
-      setTasks([...tasks, { ...newTask, id: tasks.length + 1 }]);
-      handleClose();
-    } else {
-      alert('Vui lòng điền đầy đủ thông tin!');
-    }
+    // if (newTask.title && newTask.description && newTask.dueDate) {
+    //   setTasks([...tasks, { ...newTask, id: tasks.length + 1 }]);
+    //   handleClose();
+    // } else {
+    //   alert('Vui lòng điền đầy đủ thông tin!');
+    // }
   };
 
-  const handleCompleteTask = (id: number) => {
-    setTasks(tasks.map(task => task.id === id ? { ...task, status: 'Hoàn thành' } : task));
-  };
+  // const handleCompleteTask = (id: number) => {
+  //   setTasks(tasks.map(task => task.id === id ? { ...task, status: 'Hoàn thành' } : task));
+  // };
 
-  const handleDeleteTask = (id: number) => {
-    setTasks(tasks.filter(task => task.id !== id));
-  };
+  // const handleDeleteTask = (id: number) => {
+  //   setTasks(tasks.filter(task => task.id !== id));
+  // };
 
   return (
     <Container className="my-4">

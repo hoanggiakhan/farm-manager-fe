@@ -60,6 +60,9 @@ const InventoryManagement: React.FC = () => {
   }, [selectedWarehouse]);
 
   const handleAddItem = () => {
+    if(!selectedWarehouse){
+      alert('nông trại chưa có kho , vui lòng thêm kho')
+    }
     if (selectedWarehouse) {
       addItemToInventory(selectedWarehouse, newItem)
         .then(() => {

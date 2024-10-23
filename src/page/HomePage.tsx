@@ -55,7 +55,9 @@ const navigate = useNavigate(); // Hook dùng để điều hướng
             size="lg"
             onClick={handleRegister}
           >
-            Đăng Ký
+           <Link to={'/register'} className='nav-link'>
+           Đăng ký thông tin nông trại
+           </Link>
           </Button>
         </Col>
       </Row>

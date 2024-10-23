@@ -23,22 +23,22 @@ export async function getAllTask(userId: number): Promise<TaskModel[]> {
 }
 
 
-export const addTask = async (inventoryId: number, item: ItemModel): Promise<void> => {
-    try {
-      const response = await fetch(endpointBE+`/inventory/add-item/${inventoryId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-        },
-        body: JSON.stringify(item),
-      });
+// export const addTask = async (inventoryId: number, item: ItemModel): Promise<void> => {
+//     try {
+//       const response = await fetch(endpointBE+`/inventory/add-item/${inventoryId}`, {
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//           'Authorization': `Bearer ${localStorage.getItem('token')}`,
+//         },
+//         body: JSON.stringify(item),
+//       });
   
-      if (!response.ok) {
-        throw new Error(`Lỗi khi thêm sản phẩm: ${response.statusText}`);
-      }
-    } catch (error) {
-      console.error('Error adding item to inventory:', error);
-      throw error; // Ném lỗi để xử lý trong UI nếu cần
-    }
-  };
+//       if (!response.ok) {
+//         throw new Error(`Lỗi khi thêm sản phẩm: ${response.statusText}`);
+//       }
+//     } catch (error) {
+//       console.error('Error adding item to inventory:', error);
+//       throw error; // Ném lỗi để xử lý trong UI nếu cần
+//     }
+//   };

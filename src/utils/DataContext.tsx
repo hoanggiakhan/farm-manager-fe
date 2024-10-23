@@ -33,7 +33,6 @@ export const DataProvider: React.FC<DataProps> = ({ children }) => {
     getAllAnimal(userId)
       .then((response) => {
         setAnimals(response);
-        setLoading(false);
       })
       .catch((error) => {
         setError(error);
@@ -46,6 +45,7 @@ export const DataProvider: React.FC<DataProps> = ({ children }) => {
         setCrops(response);
       })
       .catch((error) => {
+        setLoading(false);
         setError(error);
       });
   }, [userId]);
