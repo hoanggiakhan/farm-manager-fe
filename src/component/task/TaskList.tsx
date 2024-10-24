@@ -1,17 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Row, Col, Table, Button, Modal, Form } from 'react-bootstrap';
 import { getIdUserByToken } from '../../utils/JwtService';
-import { getAllTask } from '../../api/TaskApi';
+import { addTask, deleteTask, getAllTask } from '../../api/TaskApi';
 import TaskModel from '../../model/TaskModel';
 import { TaskModal } from './TaskModal';
-
-// interface Task {
-//   id: number;
-//   title: string;
-//   description: string;
-//   dueDate: string;
-//   status: string;
-// }
+import { toast } from 'react-toastify';
 
 const TaskList: React.FC = () => {
   const [tasks, setTasks] = useState<TaskModel[]>([]);
@@ -19,25 +12,57 @@ const TaskList: React.FC = () => {
   const [error, setError] = useState<null | Error>(null);
   const [show, setShow] = useState(false);
   const [newTask, setNewTask] = useState<TaskModel>({
-    taskId : 0,
-    title : '',
-    description : '',
-    date : '',
-    status : 0,
-   nameEmployee : '',
+    taskId: 0,
+    title: '',
+    description: '',
+    date: '',
+    status: 0,
+    nameEmployee: '',
+    animalName: '',
+    cropName: '',
   });
-  const userId = getIdUserByToken();
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
+  const userId = getIdUserByToken(); // Lấy userId từ token
+
+  const handleAddTask = () => {
+    addTask(newTask)
+      .then(() => {
+        alert('Thêm công việc thành công')
+        // Gọi lại API để lấy danh sách mới sau khi thêm task
+        getAllTask(userId)
+          .then((updatedTasks) => setTasks(updatedTasks))
+          .catch((error) => toast.error(`Lỗi khi tải danh sách: ${error.message}`));
+        setNewTask({
+          taskId: 0,
+          title: '',
+          description: '',
+          date: '',
+          status: 0,
+          nameEmployee: '',
+          animalName: '',
+          cropName: '',
+        }); // Đặt lại giá trị newTask
+        setShow(false); // Ẩn modal sau khi thêm
+      })
+      .catch((error) => {
+        alert(`Lỗi khi thêm nhiệm vụ: ${error.message}`);
+      });
+  };
+
   useEffect(() => {
     getAllTask(userId)
       .then((response) => {
-       setTasks(response)
+        setTasks(response);
         setLoading(false);
       })
       .catch((error) => {
         setLoading(false);
         setError(error);
       });
-  }, []);
+  }, [userId]); // Thêm userId vào danh sách phụ thuộc của useEffect
 
   if (loading) {
     return <div>Loading...</div>;
@@ -46,25 +71,17 @@ const TaskList: React.FC = () => {
   if (error) {
     return <div>Error: {error.message}</div>;
   }
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
 
-  const handleAddTask = () => {
-    // if (newTask.title && newTask.description && newTask.dueDate) {
-    //   setTasks([...tasks, { ...newTask, id: tasks.length + 1 }]);
-    //   handleClose();
-    // } else {
-    //   alert('Vui lòng điền đầy đủ thông tin!');
-    // }
+  const handleDeleteTask = (taskId: number) => {
+    deleteTask(taskId)
+      .then(() => {
+        setTasks((prevItems) => prevItems.filter((item) => item.taskId !== taskId)); // Cập nhật danh sách sau khi xóa
+        alert('Xóa thành công');
+      })
+      .catch((error) => {
+        alert(`Lỗi khi xóa nhiệm vụ: ${error.message}`);
+      });
   };
-
-  // const handleCompleteTask = (id: number) => {
-  //   setTasks(tasks.map(task => task.id === id ? { ...task, status: 'Hoàn thành' } : task));
-  // };
-
-  // const handleDeleteTask = (id: number) => {
-  //   setTasks(tasks.filter(task => task.id !== id));
-  // };
 
   return (
     <Container className="my-4">
@@ -91,39 +108,32 @@ const TaskList: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {tasks.map((task) => {
-            // const isOverdue = new Date(task.dueDate) < new Date() && task.status !== 'Hoàn thành';
-            return (
-              // style={{ backgroundColor: isOverdue ? '#f8d7da' : 'white' }}
-              <tr key={task.taskId}>
-                <td>{task.title}</td>
-                <td>{task.description}</td>
-                <td>{new Date(task.date).toLocaleDateString()}</td>
-                <td style={{ color: task.status === 1 ? 'green' : 'orange' }}>{task.status === 1 ? 'Hoàn thành' : 'Chưa hoàn thành'}</td>
-                <td>
-                {/* onClick={() => handleCompleteTask(task.id)} disabled={task.status === 'Hoàn thành'} */}
-                  {/* <Button variant="success">
-                    Hoàn thành
-                  </Button>{' '} */}
-                  {/* onClick={() => handleDeleteTask(task.id)} */}
-                  <Button variant="danger">
-                    Xóa
-                  </Button>
-                </td>
-              </tr>
-            );
-          })}
+          {tasks.map((task) => (
+            <tr key={task.taskId}>
+              <td>{task.title}</td>
+              <td>{task.description}</td>
+              <td>{new Date(task.date).toLocaleDateString()}</td>
+              <td style={{ color: task.status === 1 ? 'green' : 'orange' }}>
+                {task.status === 1 ? 'Hoàn thành' : 'Chưa hoàn thành'}
+              </td>
+              <td>
+                <Button variant="danger" onClick={() => handleDeleteTask(task.taskId)}>
+                  Xóa
+                </Button>
+              </td>
+            </tr>
+          ))}
         </tbody>
       </Table>
 
       {/* Modal để thêm nhiệm vụ mới */}
-     <TaskModal
-       show={show}
-       setNewTask={setNewTask}
-       handleAddTask={handleAddTask}
-       newTask={newTask}
-       handleClose={handleClose}
-     />
+      <TaskModal
+        show={show}
+        setNewTask={setNewTask}
+        handleAddTask={handleAddTask}
+        newTask={newTask}
+        handleClose={handleClose}
+      />
     </Container>
   );
 };

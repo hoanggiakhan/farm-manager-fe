@@ -57,7 +57,22 @@ const AnimalManagement: React.FC = () => {
   //     )
   //   );
   // };
-  const{animals , loading , error} = useDataContext();
+  const [animals, setAnimals] = useState<AnimalModel[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<null | Error>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const userId : number= getIdUserByToken();
+  useEffect(() => {
+    getAllAnimal(userId)
+      .then((response) => {
+        setAnimals(response);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setLoading(false);
+        setError(error);
+      });
+  }, []);
 
   if (loading) {
     return <div>Loading...</div>;

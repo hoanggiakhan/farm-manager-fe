@@ -63,7 +63,25 @@ export const addItemToInventory = async (inventoryId: number, item: ItemModel): 
       throw error; // Ném lỗi để xử lý trong UI nếu cần
     }
   };
-
+  export const addInventory = async (userId : number): Promise<void> => {
+    try {
+      const response = await fetch(endpointBE+`/inventory/add-inventory/${userId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: JSON.stringify(userId),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Lỗi khi thêm kho: ${response.statusText}`);
+      }
+    } catch (error) {
+      console.error('Error adding Inventory:', error);
+      throw error; // Ném lỗi để xử lý trong UI nếu cần
+    }
+  };
 
   export const deleteItemFromInventory = async (itemId: number): Promise<void> => {
     try {
@@ -80,6 +98,25 @@ export const addItemToInventory = async (inventoryId: number, item: ItemModel): 
       }
     } catch (error) {
       console.error('Error deleting item from inventory:', error);
+      throw error; // Ném lỗi để xử lý trong UI nếu cần
+    }
+  };
+
+  export const deleteInventory = async (inventoryId: number): Promise<void> => {
+    try {
+      const response = await fetch(endpointBE+`/inventory/delete-inventory/${inventoryId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Lỗi khi xóa kho: ${response.statusText}`);
+      }
+    } catch (error) {
+      console.error('Error deleting Inventory:', error);
       throw error; // Ném lỗi để xử lý trong UI nếu cần
     }
   };

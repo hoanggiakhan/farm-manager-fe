@@ -8,18 +8,21 @@ import './Navbar.css'; // Import file CSS tùy chỉnh
 const NavbarComponent: React.FC = () => {
   const { setLoggedIn } = useAuth();
   const navigate = useNavigate();
-  
+
   return (
-    <Navbar 
-      bg="success" 
-      variant="dark" 
-      expand="lg" 
-      fixed="top" // Luôn cố định ở đầu trang
+    <Navbar
+      bg="success"
+      variant="dark"
+      expand="lg"
+      fixed="top"
       className="custom-navbar"
     >
-      <Container>
+      <Container fluid>
+        <Navbar.Brand className="fw-bold">
+          <i className="fas fa-tractor me-2"></i>
+        </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
+        <Navbar.Collapse id="basic-navbar-nav" className="justify-content-between">
           <Nav className="me-auto">
             <Link to="dashboard" className="nav-link">Dashboard</Link>
             <Link to="livestock" className="nav-link">Quản lý vật nuôi</Link>
@@ -30,7 +33,7 @@ const NavbarComponent: React.FC = () => {
             <Link to="about" className="nav-link">Giới thiệu</Link>
           </Nav>
 
-          <Nav className="ml-auto d-flex align-items-center">
+          <Nav className="d-flex align-items-center">
             <Link to="notifications" className="icon-link nav-link position-relative mx-2">
               <i className="fas fa-bell"></i>
               <span className="notification-badge">3</span>

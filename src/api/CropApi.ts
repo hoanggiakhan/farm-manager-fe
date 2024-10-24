@@ -71,3 +71,23 @@ export async function getAllCropFarm(): Promise<CropModel[]> {
 
     return data;
 }
+
+export const deleteCrop = async (cropId: number): Promise<void> => {
+    try {
+      const response = await fetch(endpointBE+`/crop/delete-crop/${cropId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Lỗi khi xóa cây trồng: ${response.statusText}`);
+      }
+    } catch (error) {
+      console.error('Error deleting Crop:', error);
+      throw error; // Ném lỗi để xử lý trong UI nếu cần
+    }
+  };
+  

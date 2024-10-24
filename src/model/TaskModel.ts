@@ -2,9 +2,11 @@ class TaskModel{
     taskId : number;
     title : string;
     description : string;
-   date : string;
+    date : string;
     status : number;
    nameEmployee : string;
+   animalName ?: string;
+   cropName ?: string;
    constructor(title : string,
     description : string,
    date : string,

@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Form, Button, Container, Row, Col } from 'react-bootstrap';
 import { FarmRequest } from '../model/FarmRequest';
 import { addFarm } from '../api/FarmApi';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const FarmRegistrationForm: React.FC = () => {
     const navigation = useNavigate();
@@ -29,7 +30,7 @@ const FarmRegistrationForm: React.FC = () => {
     e.preventDefault(); // Ngăn chặn hành động submit mặc định
     addFarm(farm)
       .then(() => {
-        alert('Đăng ký thành công');
+       alert('Đăng ký thành công')
         navigation('/login')
       })
       .catch((error) => {
@@ -41,14 +42,14 @@ const FarmRegistrationForm: React.FC = () => {
     <Container className="my-5">
       <Row className="justify-content-center">
         <Col md={6}>
-          <h3 className="text-center mb-4">Farm Registration</h3>
+          <h3 className="text-center mb-4">Đăng ký thông tin nông trại</h3>
           <Form onSubmit={handleSubmit} className="p-4 border rounded bg-light shadow">
             <Form.Group controlId="farmName" className="mb-3">
-              <Form.Label>Farm Name</Form.Label>
+              <Form.Label>Tên nông trại<span className='text-danger'>*</span></Form.Label>
               <Form.Control
                 type="text"
                 name="farmName"
-                placeholder="Enter farm name"
+                placeholder="Tên nông trại"
                 value={farm.farmName}
                 onChange={handleChange}
                 required
@@ -56,11 +57,11 @@ const FarmRegistrationForm: React.FC = () => {
             </Form.Group>
 
             <Form.Group controlId="addressFarm" className="mb-3">
-              <Form.Label>Farm Address</Form.Label>
+              <Form.Label>Địa chỉ nông trại<span className='text-danger'>*</span></Form.Label>
               <Form.Control
                 type="text"
                 name="addressFarm" // Đồng nhất với state
-                placeholder="Enter farm address"
+                placeholder="Địa chỉ nông trại"
                 value={farm.addressFarm}
                 onChange={handleChange}
                 required
@@ -68,11 +69,11 @@ const FarmRegistrationForm: React.FC = () => {
             </Form.Group>
 
             <Form.Group controlId="fullName" className="mb-3">
-              <Form.Label>Full Name</Form.Label>
+              <Form.Label>Họ và tên quản lý<span className='text-danger'>*</span></Form.Label>
               <Form.Control
                 type="text"
                 name="fullName"
-                placeholder="Enter full name"
+                placeholder="Họ và tên quản lý"
                 value={farm.fullName}
                 onChange={handleChange}
                 required
@@ -80,11 +81,11 @@ const FarmRegistrationForm: React.FC = () => {
             </Form.Group>
 
             <Form.Group controlId="phoneNumber" className="mb-3">
-              <Form.Label>Phone Number</Form.Label>
+              <Form.Label>Số điện thoại</Form.Label>
               <Form.Control
                 type="tel"
                 name="phoneNumber" // Đồng nhất với state
-                placeholder="Enter phone number"
+                placeholder="Số điện thoại"
                 value={farm.phoneNumber}
                 onChange={handleChange}
                 required
@@ -92,11 +93,11 @@ const FarmRegistrationForm: React.FC = () => {
             </Form.Group>
 
             <Form.Group controlId="address" className="mb-3">
-              <Form.Label>User Address</Form.Label>
+              <Form.Label>Địa chỉ<span className='text-danger'>*</span></Form.Label>
               <Form.Control
                 type="text"
                 name="address"
-                placeholder="Enter your address"
+                placeholder="Địa chỉ"
                 value={farm.address}
                 onChange={handleChange}
                 required
@@ -104,11 +105,11 @@ const FarmRegistrationForm: React.FC = () => {
             </Form.Group>
 
             <Form.Group controlId="email" className="mb-3">
-              <Form.Label>Email</Form.Label>
+              <Form.Label>Email<span className='text-danger'>*</span></Form.Label>
               <Form.Control
                 type="email"
                 name="email"
-                placeholder="Enter email"
+                placeholder="Email"
                 value={farm.email}
                 onChange={handleChange}
                 required
@@ -116,7 +117,7 @@ const FarmRegistrationForm: React.FC = () => {
             </Form.Group>
 
             <Form.Group controlId="username" className="mb-3">
-              <Form.Label>Username</Form.Label>
+              <Form.Label>Username<span className='text-danger'>*</span></Form.Label>
               <Form.Control
                 type="text"
                 name="username"
@@ -128,7 +129,7 @@ const FarmRegistrationForm: React.FC = () => {
             </Form.Group>
 
             <Form.Group controlId="password" className="mb-3">
-              <Form.Label>Password</Form.Label>
+              <Form.Label>Password<span className='text-danger'>*</span></Form.Label>
               <Form.Control
                 type="password"
                 name="password"
@@ -140,9 +141,12 @@ const FarmRegistrationForm: React.FC = () => {
             </Form.Group>
 
             <div className="text-center">
-              <Button variant="primary" type="submit" className="w-100">
-                Register
+              <Button variant="primary" type="submit" className="w-25">
+                Đăng ký
               </Button>
+           <Button variant="primary" type="submit" className="w-25" style={{ marginLeft: '4px' }}>
+           <Link to={'/'} className='text-white nav-link'>Home</Link>
+           </Button>
             </div>
           </Form>
         </Col>

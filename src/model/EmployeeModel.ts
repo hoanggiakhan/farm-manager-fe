@@ -1,3 +1,5 @@
+import { RoleModel } from "./RoleModel";
+
 class EmployeeModel{
     id?:number;
     employeeId : number;
@@ -8,7 +10,7 @@ class EmployeeModel{
     phoneNumber : string;
     email : string;
     age : number;
-    role ?: number;
+    roles ?: RoleModel[];
     joinDate : string;
     constructor(employeeId : number,
         fullName : string,

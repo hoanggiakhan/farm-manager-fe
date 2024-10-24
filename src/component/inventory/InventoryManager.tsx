@@ -2,11 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { Container, Row, Col, Table, Button, Form, Modal } from 'react-bootstrap';
 import InventoryModel from '../../model/InventoryModel';
 import { getIdUserByToken } from '../../utils/JwtService';
-import { getAllInventory, getAllItemByInventory, addItemToInventory, deleteItemFromInventory } from '../../api/InventoryApi'; // API add item
+import { getAllInventory, getAllItemByInventory, addItemToInventory, deleteItemFromInventory, addInventory, deleteInventory } from '../../api/InventoryApi'; // API add item
 import ItemModel from '../../model/ItemModel';
 import { InventoryModal } from './InventoryModal';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 const InventoryManagement: React.FC = () => {
+  const navigation = useNavigate();
   const [inventories, setInventories] = useState<InventoryModel[]>([]);
   const [loadingInventory, setLoadingInventory] = useState(true);
   const [loadingItems, setLoadingItems] = useState(false);
@@ -43,11 +46,30 @@ const InventoryManagement: React.FC = () => {
       });
   }, [userId]);
 
+  const handleAddInventory = () => {
+    addInventory(userId)
+      .then(() => {
+        // Gọi lại API để lấy danh sách kho sau khi thêm
+        getAllInventory(userId)
+          .then((updatedInventories) => {
+            setInventories(updatedInventories); // Cập nhật lại danh sách kho mới
+            alert('Thêm kho thành công');
+          })
+          .catch((error) => {
+            alert(`Lỗi khi tải danh sách kho: ${error.message}`);
+          });
+      })
+      .catch((error) => {
+        alert(`Lỗi khi thêm kho: ${error.message}`);
+      });
+  };
+
+
   // Lấy danh sách sản phẩm khi mã kho được chọn
   useEffect(() => {
     if (selectedWarehouse) {
       setLoadingItems(true);
-      getAllItemByInventory(selectedWarehouse)
+       getAllItemByInventory(selectedWarehouse)
         .then((response) => {
           setItems(response);
           setLoadingItems(false);
@@ -60,19 +82,27 @@ const InventoryManagement: React.FC = () => {
   }, [selectedWarehouse]);
 
   const handleAddItem = () => {
-    if(!selectedWarehouse){
-      alert('nông trại chưa có kho , vui lòng thêm kho')
+    if (!selectedWarehouse) {
+      alert('Nông trại chưa có kho, vui lòng thêm kho');
+      setShowModal(false);
+      return;
     }
-    if (selectedWarehouse) {
-      addItemToInventory(selectedWarehouse, newItem)
-        .then(() => {
-          setItems((prevItems) => [...prevItems, newItem]); // Cập nhật danh sách sản phẩm
-          setShowModal(false); // Ẩn modal sau khi thêm
-        })
-        .catch((error) => {
-          alert(`Lỗi khi thêm sản phẩm: ${error.message}`);
-        });
-    }
+    addItemToInventory(selectedWarehouse, newItem)
+      .then(() => {
+        getAllItemByInventory(userId)
+            .then((updatedItems) => {
+              setItems(updatedItems); 
+            })
+            .catch((error) => {
+              alert(`Lỗi khi tải danh sách kho: ${error.message}`);
+            });
+        alert('Thêm thành công');
+        setItems((prevItems) => [...prevItems, newItem]); // Cập nhật danh sách sản phẩm
+        setShowModal(false); // Ẩn modal sau khi thêm
+      })
+      .catch((error) => {
+        alert(`Lỗi khi thêm sản phẩm: ${error.message}`);
+      });
   };
 
   const handleDeleteItem = (itemId: number) => {
@@ -80,13 +110,35 @@ const InventoryManagement: React.FC = () => {
       deleteItemFromInventory(itemId)
         .then(() => {
           setItems((prevItems) => prevItems.filter(item => item.itemId !== itemId)); // Cập nhật danh sách sản phẩm
+          toast.success('Xóa thành công');
         })
         .catch((error) => {
-          alert(`Lỗi khi xóa sản phẩm: ${error.message}`);
+          toast.error(`Lỗi khi xóa sản phẩm: ${error.message}`);
         });
     }
   };
-  
+
+  const handleDeleteInventory = () => {
+    if (selectedWarehouse) {
+      deleteInventory(selectedWarehouse)
+        .then(() => {
+          // Gọi lại API để lấy danh sách kho sau khi xóa
+          getAllInventory(userId)
+            .then((updatedInventories) => {
+              setInventories(updatedInventories); // Cập nhật lại danh sách kho mới
+              alert('Xóa kho thành công');
+            })
+            .catch((error) => {
+              alert(`Lỗi khi tải danh sách kho: ${error.message}`);
+            });
+        })
+        .catch((error) => {
+          alert(`Lỗi khi xóa kho: ${error.message}`);
+        });
+    }
+  };
+
+
   const handleModalChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setNewItem((prevItem) => ({ ...prevItem, [name]: value }));
@@ -164,12 +216,19 @@ const InventoryManagement: React.FC = () => {
 
       {/* Modal thêm sản phẩm */}
       <InventoryModal
-       handleAddItem={handleAddItem}
-       showModal={showModal}
-       newItem={newItem}
-       handleModalChange={handleModalChange}
-       setShowModal={setShowModal}
+        handleAddItem={handleAddItem}
+        showModal={showModal}
+        newItem={newItem}
+        handleModalChange={handleModalChange}
+        setShowModal={setShowModal}
       />
+
+      <Button variant="success" onClick={handleAddInventory}>
+        Thêm kho
+      </Button>
+      <Button variant="danger" onClick={handleDeleteInventory} style={{ marginLeft: '4px' }}>
+        Xóa kho
+      </Button>
     </Container>
   );
 };

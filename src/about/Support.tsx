@@ -14,7 +14,7 @@ const Support: React.FC = () => {
 
       <Row>
         <Col md={6} className="mb-4">
-          <Card>
+          <Card style={{height : '410px'}}>
             <Card.Body>
               <Card.Title>Thông tin liên hệ</Card.Title>
               <Card.Text>

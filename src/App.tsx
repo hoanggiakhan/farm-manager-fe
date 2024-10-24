@@ -30,6 +30,7 @@ import PrivateRoute from './utils/PrivateRoute';
 import { DataProvider } from './utils/DataContext';
 import TaskList from './component/task/TaskList';
 import FarmRegistrationForm from './page/FarmRegister';
+import PositionForm from './component/PositionForm';
 
 
 const App: React.FC = () => {
@@ -72,7 +73,8 @@ const App: React.FC = () => {
               <Route path="profile" element={<UserProfile />} />
               <Route path="about" element={<About />} />
               <Route path="notifications" element={<Notifications />} />
-              <Route path="support" element={<Support />} />
+              <Route path="support" element={<Support/>}/>
+              <Route path="position" element={<PositionForm/>}/>
             </Route>
           </Routes>
         </ConfirmProvider>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Button, Modal, Form } from 'react-bootstrap';
-import { getAllCrop, getAllCropFarm } from '../../api/CropApi';
+import { deleteCrop, getAllCrop, getAllCropFarm } from '../../api/CropApi';
 import CropModel from '../../model/CropModel';
 import { getIdUserByToken, getUsernameByToken } from '../../utils/JwtService';
 
@@ -50,7 +50,16 @@ const CropsManagement: React.FC = () => {
   if (error) {
     return <div>Error: {error.message}</div>;
   }
-
+  const handleDeleteCrop = (cropId: number) => {
+    deleteCrop(cropId)
+      .then(() => {
+        setCrops((prevItems) => prevItems.filter(item => item.cropId !== cropId)); // Cập nhật danh sách
+        alert('Xóa thành công');
+      })
+      .catch((error) => {
+        alert(`Lỗi khi xóa cây trồng: ${error.message}`);
+      });
+  };
   // const filteredEmployees = employees.filter(employee => {
   //   const fullName = `${employee.firstName} ${employee.lastName}`.toLowerCase();
   //   return (
@@ -74,6 +83,7 @@ const CropsManagement: React.FC = () => {
             <th>Diện tích (hecta)</th>
             <th>Năng suất (kg/hecta)</th>
             <th>Ngày gieo trồng</th>
+            <th>Hành động</th>
           </tr>
         </thead>
         <tbody>
@@ -84,6 +94,10 @@ const CropsManagement: React.FC = () => {
               <td>{crop.acreage}</td>
               <td>{crop.productivity}</td>
               <td>{new Date(crop.plantingDay).toLocaleDateString()}</td>
+              <td>
+                <Button variant="danger" onClick={()=>handleDeleteCrop(crop.cropId)}>Xóa</Button>
+                <Button variant="warning" className="ms-2">Sửa</Button>
+              </td>
             </tr>
           ))}
         </tbody>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faList, faClipboard, faBoxes, faMapMarkedAlt, faSeedling, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
+import { faList, faClipboard, faBoxes, faMapMarkedAlt, faSeedling, faQuestionCircle, faUsers, faBriefcase } from '@fortawesome/free-solid-svg-icons';
 import './Slidebar.css'; // Import file CSS
 import { Link } from 'react-router-dom';
 import { useDataContext } from '../../utils/DataContext';
@@ -15,6 +15,11 @@ export const Sidebar: React.FC = () => {
         <li>
           <Link to="dashboard" className="nav-link farm-management">
             <i className="fas fa-seedling"></i> Farm Management
+          </Link>
+        </li>
+        <li>
+          <Link to="position">
+            <FontAwesomeIcon icon={faBriefcase} className="me-2" /> Danh sách vị trí
           </Link>
         </li>
         <li>
@@ -49,7 +54,7 @@ export const Sidebar: React.FC = () => {
         </li>
       </ul>
       <div className="statistics text-center">
-      <hr className="divider" />
+        <hr className="divider" />
         <p className="stat-item"><strong>Số lượng vật nuôi:</strong> {totalAnimals}</p>
         <p className="stat-item"><strong>Số loại cây trồng:</strong> {crops.length}</p>
       </div>
