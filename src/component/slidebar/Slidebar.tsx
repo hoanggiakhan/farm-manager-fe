@@ -1,12 +1,38 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faList, faClipboard, faBoxes, faMapMarkedAlt, faSeedling, faQuestionCircle, faUsers, faBriefcase } from '@fortawesome/free-solid-svg-icons';
 import './Slidebar.css'; // Import file CSS
 import { Link } from 'react-router-dom';
 import { useDataContext } from '../../utils/DataContext';
+import { getIdUserByToken } from '../../utils/JwtService';
+import { getAllAnimal } from '../../api/AnimalApi';
+import { getAllCrop } from '../../api/CropApi';
+import AnimalModel from '../../model/AnimalModel';
+import CropModel from '../../model/CropModel';
 
 export const Sidebar: React.FC = () => {
-  const { animals, crops } = useDataContext();
+  const [animals, setAnimals] = useState<AnimalModel[]>([]);
+  const [crops, setCrops] = useState<CropModel[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<null | Error>(null);
+  const { fetchData } = useDataContext(); // Lấy hàm từ context
+  const userId = getIdUserByToken();
+  useEffect(() => {
+    if (userId) {
+      fetchData(); // Fetch data when component mounts or userId changes
+    }
+  }, [userId]);
+
+  useEffect(() => {
+    // Fetch Data khi có cập nhật từ Context
+    const fetchDataFromApi = async () => {
+      const animalsData = await getAllAnimal(userId);
+      const cropsData = await getAllCrop(userId);
+      setAnimals(animalsData);
+      setCrops(cropsData);
+    };
+    fetchDataFromApi();
+  }, [fetchData]); // Chạy lại khi fetchData thay đổi
   const totalAnimals = animals.reduce((sum, animal) => sum + animal.quantity, 0);
 
   return (

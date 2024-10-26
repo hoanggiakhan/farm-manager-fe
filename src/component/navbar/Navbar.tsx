@@ -4,11 +4,15 @@ import { Link, useNavigate } from 'react-router-dom';
 import { logout } from '../../utils/JwtService';
 import { useAuth } from '../../utils/AuthContext';
 import './Navbar.css'; // Import file CSS tùy chỉnh
+import { useDataContext } from '../../utils/DataContext';
 
 const NavbarComponent: React.FC = () => {
   const { setLoggedIn } = useAuth();
   const navigate = useNavigate();
-
+  const handleLogout = () => {
+    logout(navigate); // Gọi hàm logout của bạn
+    setLoggedIn(false); // Cập nhật trạng thái đăng nhập
+  };
   return (
     <Navbar
       bg="success"
@@ -52,10 +56,7 @@ const NavbarComponent: React.FC = () => {
                 <a
                   className='dropdown-item text-center text-dark'
                   style={{ cursor: "pointer" }}
-                  onClick={() => {
-                    logout(navigate);
-                    setLoggedIn(false);
-                  }}
+                  onClick={handleLogout} // Gọi hàm handleLogout
                 >
                   Đăng xuất
                 </a>

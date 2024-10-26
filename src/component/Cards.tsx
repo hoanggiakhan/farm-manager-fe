@@ -1,15 +1,55 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, Row, Col } from 'react-bootstrap';
 import { FaPaw, FaSeedling, FaDollarSign } from 'react-icons/fa';
 import AnimalModel from '../model/AnimalModel';
 import CropModel from '../model/CropModel';
 import { useDataContext } from '../utils/DataContext';
+import { getIdUserByToken } from '../utils/JwtService';
+import { getAllAnimal } from '../api/AnimalApi';
+import { getAllCrop } from '../api/CropApi';
 
 
 
 const Cards: React.FC = () => {
-  const { crops , animals} = useDataContext();
-  // Tính tổng số lượng cây trồng
+  const [animals, setAnimals] = useState<AnimalModel[]>([]);
+  const [crops, setCrops] = useState<CropModel[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<null | Error>(null);
+  const { fetchData } = useDataContext(); // Lấy hàm từ context
+  const userId = getIdUserByToken();
+  useEffect(() => {
+    if (userId) {
+      fetchData(); // Fetch data when component mounts or userId changes
+    }
+  }, [userId]);
+  useEffect(() => {
+    if (!userId) {
+      setLoading(false);
+      return; // Không làm gì nếu người dùng chưa đăng nhập
+    }
+
+    // Fetch Animal Data
+    getAllAnimal(userId)
+      .then((response) => {
+        setAnimals(response);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setError(error);
+        setLoading(false);
+      });
+
+    // Fetch Crop Data
+    getAllCrop(userId)
+      .then((response) => {
+        setCrops(response);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setLoading(false);
+        setError(error);
+      });
+  }, [userId,fetchData]);
   const totalCrops = crops.reduce((sum, crop) => sum + crop.quantity, 0);
 
   // Giả sử số lượng vật nuôi là độ dài của mảng animals

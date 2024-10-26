@@ -63,6 +63,7 @@ export async function getAllCropFarm(): Promise<CropModel[]> {
                 plantingDay: cropData.plantingDay, // ngày gieo trồng
                 acreage: cropData.acreage, // diện tích gieo trồng
                 productivity: cropData.productivity, // năng suất
+                type : cropData.type
             };
             return crop;
         });
@@ -91,3 +92,23 @@ export const deleteCrop = async (cropId: number): Promise<void> => {
     }
   };
   
+  export const addCrop = async (userId: number, crop: CropModel): Promise<void> => {
+    try {
+      const response = await fetch(`${endpointBE}/crop/${userId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`, // Kiểm tra token
+        },
+        body: JSON.stringify(crop),
+      });
+  
+      if (!response.ok) {
+        const errorText = await response.text(); // Lấy nội dung phản hồi
+        throw new Error(`Lỗi khi thêm cây trồng: ${response.statusText}. Chi tiết: ${errorText}`);
+      }
+    } catch (error) {
+      console.error('Error adding Crop:', error);
+      throw error; // Ném lỗi để xử lý trong UI nếu cần
+    }
+  };

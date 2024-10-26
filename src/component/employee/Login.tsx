@@ -47,11 +47,11 @@ const Login: React.FC = () => {
         const { jwtToken } = data;
         const decodedToken = jwtDecode(jwtToken) as JwtPayload;
         // Kiểm tra xem tài khoản kích hoạt chư
-        toast.success("Đăng nhâp thành công");
+        alert("Đăng nhâp thành công");
         setLoggedIn(true); // Đã đăng nhập
         localStorage.setItem("token", jwtToken);
         // Kiểm tra role để chuyển về link
-        if (decodedToken.role === "ADMIN") {
+        if (decodedToken.role === "Chủ nông trại") {
           navigation("/app/dashboard");
         } else {
           navigation("/app");
@@ -60,7 +60,7 @@ const Login: React.FC = () => {
       .catch((error) => {
         console.log("Lỗi đăng nhập: " + error);
         setError("Tài khoản hoặc mật khẩu không đúng");
-        toast.error("Tài khoản hoặc mật khẩu không đúng");
+        alert("Tài khoản hoặc mật khẩu không đúng");
       });
   }
   return (

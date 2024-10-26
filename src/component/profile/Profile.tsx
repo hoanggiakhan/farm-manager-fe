@@ -3,6 +3,7 @@ import { Card, Form, Button, Col, Row } from 'react-bootstrap';
 import { getUserById } from '../../api/EmployeeApi';
 import { getIdUserByToken } from '../../utils/JwtService';
 import EmployeeModel from '../../model/EmployeeModel';
+import { LocalDate } from 'js-joda';
 
 interface UserProfileData {
   fullName: string;
@@ -10,7 +11,7 @@ interface UserProfileData {
   phone: string;
   // profilePicture: string;
   age: number;
-  joinDate: string;
+  joinDate: LocalDate;
 }
 
 const UserProfile: React.FC = () => {
@@ -163,7 +164,7 @@ const UserProfile: React.FC = () => {
                   <Form.Control
                     type="text"
                     name="joinDate"
-                    value={tempUserData?.joinDate || ''}
+                    value={ tempUserData?.joinDate.toString() || ''}
                     onChange={handleInputChange}
                     disabled={!editing}
                   />

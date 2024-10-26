@@ -2,6 +2,7 @@
 import EmployeeModel from "../model/EmployeeModel";
 import { RoleModel } from "../model/RoleModel";
 import { endpointBE } from "../utils/Contants";
+import { checkExistUsername } from "../utils/Validation";
 import { request } from "./Request";
 
 async function getEmployee(endpoint: string): Promise<EmployeeModel> {
@@ -108,6 +109,28 @@ export const deleteEmployee = async (employeeId: number): Promise<void> => {
       }
     } catch (error) {
       console.error('Error adding Position:', error);
+      throw error; // Ném lỗi để xử lý trong UI nếu cần
+    }
+  };
+  
+
+  export const addEmployee = async (userId: number, employee: EmployeeModel): Promise<void> => {
+    try {
+      const response = await fetch(`${endpointBE}/employee/${userId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token') || ''}`, // Kiểm tra token
+        },
+        body: JSON.stringify(employee),
+      });
+  
+      if (!response.ok) {
+        const errorText = await response.text(); // Lấy nội dung phản hồi
+        throw new Error(`Lỗi khi thêm nhân viên: ${response.statusText}. Chi tiết: ${errorText}`);
+      }
+    } catch (error) {
+      console.error('Error adding Employee:', error);
       throw error; // Ném lỗi để xử lý trong UI nếu cần
     }
   };

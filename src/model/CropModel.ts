@@ -1,3 +1,5 @@
+import { LocalDate } from "js-joda";
+
 class CropModel{
      cropId : number;  // mã cây trồng
      cropName : string;  // tên cây trồng
@@ -6,9 +8,10 @@ class CropModel{
      quantity : number;  // số lượng
      status : number; // trạng thái
      age : number;
-     plantingDay : string; // ngày gieo trồng
+     plantingDay : LocalDate; // ngày gieo trồng
      acreage : number; // diện tích gieo trồng
      productivity : number; // năng suất
+     type : number;
      constructor( cropId : number,  
         cropName : string, 
         sellPrice : number,  
@@ -16,8 +19,9 @@ class CropModel{
         quantity : number,  
         age : number,
         status : number, 
-        plantingDay : string, 
+        plantingDay : LocalDate, 
         acreage : number, 
+        type : number,
         productivity : number){
             this.cropId=cropId;
             this.cropName=cropName;
@@ -29,6 +33,7 @@ class CropModel{
             this.acreage=acreage;
             this.productivity=productivity;
             this.age=age;
+            this.type=type;
         }
 }
 export default CropModel;

@@ -1,68 +1,21 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import AnimalModel from "../model/AnimalModel";
-import CropModel from "../model/CropModel";
-import { getIdUserByToken } from "./JwtService";
-import { getAllAnimal } from "../api/AnimalApi";
-import { getAllCrop } from "../api/CropApi";
+import React, { createContext, useContext, useState } from 'react';
 
-interface DataProps {
-  children: React.ReactNode;
-}
+const DataContext = createContext({
+  fetchData: () => {},
+});
 
-interface DataType {
-  animals: AnimalModel[];
-  setAnimals: React.Dispatch<React.SetStateAction<AnimalModel[]>>;
-  crops: CropModel[];
-  setCrops: React.Dispatch<React.SetStateAction<CropModel[]>>;
-  loading: boolean;
-  error: Error | null;
-}
+export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [updateFlag, setUpdateFlag] = useState(false);
 
-const DataItem = createContext<DataType | undefined>(undefined);
-
-export const DataProvider: React.FC<DataProps> = ({ children }) => {
-  const [animals, setAnimals] = useState<AnimalModel[]>([]);
-  const [crops, setCrops] = useState<CropModel[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<null | Error>(null);
-
-  const userId = getIdUserByToken();
-
-  useEffect(() => {
-    // Fetch Animal Data
-    getAllAnimal(userId)
-      .then((response) => {
-        setAnimals(response);
-      })
-      .catch((error) => {
-        setError(error);
-        setLoading(false);
-      });
-
-    // Fetch Crop Data (example)
-    getAllCrop(userId)
-      .then((response) => {
-        setCrops(response);
-      })
-      .catch((error) => {
-        setLoading(false);
-        setError(error);
-      });
-  }, [userId]);
+  const fetchData = () => {
+    setUpdateFlag((prev) => !prev); // Đảo ngược trạng thái để kích hoạt re-fetch
+  };
 
   return (
-    <DataItem.Provider
-      value={{ animals, setAnimals, crops, setCrops, loading, error }}
-    >
+    <DataContext.Provider value={{ fetchData }}>
       {children}
-    </DataItem.Provider>
+    </DataContext.Provider>
   );
 };
 
-export const useDataContext = (): DataType=> {
-	const context = useContext(DataItem);
-	if (!context) {
-		throw new Error("Lỗi context");
-	}
-	return context;
-};
+export const useDataContext = () => useContext(DataContext);

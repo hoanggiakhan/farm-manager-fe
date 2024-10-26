@@ -46,7 +46,7 @@ const Calendar: React.FC = () => {
               // style={{ backgroundColor: isOverdue ? '#f8d7da' : 'white' }}
               <tr key={task.taskId}>
                 <td>{task.title}</td>
-                <td>{task.cropName === null ? `${task.animalName}` : `${task.cropName}`}</td>
+                <td>{task.cropName===null && task.animalName===null ? ' ' : task.cropName === null ? `${task.animalName}` : `${task.cropName}`}</td>
                 <td>{new Date(task.date).toLocaleDateString()}</td>
                 <td>{task.nameEmployee}</td>
               </tr>

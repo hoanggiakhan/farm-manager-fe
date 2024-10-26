@@ -6,6 +6,10 @@ import EmployeeModel from "../../model/EmployeeModel";
 import { getIdUserByToken } from "../../utils/JwtService";
 import { getAllEmployee } from "../../api/EmployeeApi";
 import Select from "react-select";
+import AnimalModel from "../../model/AnimalModel";
+import CropModel from "../../model/CropModel";
+import { getAllAnimal } from "../../api/AnimalApi";
+import { getAllCrop } from "../../api/CropApi";
 
 interface TaskProps {
   show: boolean;
@@ -22,11 +26,45 @@ export const TaskModal: React.FC<TaskProps> = ({
   handleClose,
   setNewTask,
 }) => {
-  const { crops, animals } = useDataContext();
+  const [animals, setAnimals] = useState<AnimalModel[]>([]);
+  const [crops, setCrops] = useState<CropModel[]>([]);
+  const { fetchData } = useDataContext(); // Lấy hàm từ context
+  const userId = getIdUserByToken();
   const [employees, setEmployees] = useState<EmployeeModel[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<null | Error>(null);
-  const userId = getIdUserByToken();
+  useEffect(() => {
+    if (userId) {
+      fetchData(); // Fetch data when component mounts or userId changes
+    }
+  }, [userId]);
+  useEffect(() => {
+    if (!userId) {
+      setLoading(false);
+      return; // Không làm gì nếu người dùng chưa đăng nhập
+    }
+    // Fetch Animal Data
+    getAllAnimal(userId)
+      .then((response) => {
+        setAnimals(response);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setError(error);
+        setLoading(false);
+      });
+
+    // Fetch Crop Data
+    getAllCrop(userId)
+      .then((response) => {
+        setCrops(response);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setLoading(false);
+        setError(error);
+      });
+  }, [userId,fetchData]);
 
   useEffect(() => {
     getAllEmployee(userId)
@@ -114,8 +152,8 @@ export const TaskModal: React.FC<TaskProps> = ({
               onChange={(selectedOption) =>
                 setNewTask({
                   ...newTask,
-                  animal: selectedOption?.value,
-                  crop: '',  // Đặt lại giá trị crop khi chọn vật nuôi
+                  animalName: selectedOption?.label, // Sử dụng label cho animalName
+                  cropName: '', // Đặt lại cropName khi chọn vật nuôi
                 })
               }
               isSearchable
@@ -130,14 +168,15 @@ export const TaskModal: React.FC<TaskProps> = ({
               onChange={(selectedOption) =>
                 setNewTask({
                   ...newTask,
-                  crop: selectedOption?.value,
-                  animal: '',  // Đặt lại giá trị animal khi chọn cây trồng
+                  cropName: selectedOption?.label, // Sử dụng label cho cropName
+                  animalName: '', // Đặt lại animalName khi chọn cây trồng
                 })
               }
               isSearchable
               placeholder="Chọn cây trồng"
             />
           </Form.Group>
+
 
         </Form>
       </Modal.Body>

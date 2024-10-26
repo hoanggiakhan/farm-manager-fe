@@ -1,3 +1,5 @@
+import { LocalDate } from "js-joda";
+
 class AnimalModel{
     animalId : number;  
     animalName : string; 
@@ -6,15 +8,17 @@ class AnimalModel{
     quantity : number;  
     status : number;  
     age : number;
-    buyDate : string;
+    buyDate : LocalDate;
+    type : number;
     constructor( animalId : number,  
         animalName : string, 
         importPrice : number,  
         quantity : number,  
         status : number,  
         age : number,
-        buyDate : string,
-        sellPrice : number
+        buyDate : LocalDate,
+        sellPrice : number,
+        type : number
     ){
          this.animalId=animalId;
          this.animalName=animalName;
@@ -24,6 +28,7 @@ class AnimalModel{
          this.age=age;
          this.buyDate = buyDate;
          this.sellPrice=sellPrice;
+         this.type=type;
     }
 }
 export default AnimalModel;

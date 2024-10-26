@@ -21,26 +21,46 @@ export async function getAllAnimal(userId : number): Promise<AnimalModel[]> {
         console.error("Error fetching animals:", error);
         throw error;
     }
-}
-// export async function getAllAnimal(userId : number): Promise<AnimalModel[]> {
-//     const endpoint: string = endpointBE + `/farm/animals/${userId}`;
-//     try {
-//         const response = await request(endpoint);
+};
 
-//         // Kiểm tra nếu response chứa embedded data
-//         if (response && response._embedded && Array.isArray(response._embedded.animals)) {
-//             const animalList: AnimalModel[] = response._embedded.animals.map((animalData: any) => ({
-//                 ...animalData,
-//                 // Tùy chỉnh nếu cần thiết để xử lý các trường lồng ghép
-//                 type: animalData.type || null,  // Ví dụ trường lồng ghép
-//                 owner: animalData.owner || null, // Ví dụ trường lồng ghép khác
-//             }));
-//             return animalList;
-//         } else {
-//             throw new Error("Unexpected response format");
-//         }
-//     } catch (error) {
-//         console.error("Error fetching animals:", error);
-//         throw error;
-//     }
-// }
+
+export const addAnimal= async (userId: number, animal: AnimalModel): Promise<void> => {
+    try {
+      const response = await fetch(`${endpointBE}/animal/${userId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: JSON.stringify(animal),
+      });
+  
+      if (!response.ok) {
+        const errorText = await response.text(); // Lấy nội dung phản hồi
+        throw new Error(`Lỗi khi thêm vật nuôi: ${response.statusText}. Chi tiết: ${errorText}`);
+      }
+    } catch (error) {
+      console.error('Error adding Animal:', error);
+      throw error; // Ném lỗi để xử lý trong UI nếu cần
+    }
+  };
+
+  export const deleteAnimal = async (animalId: number): Promise<void> => {
+    try {
+      const response = await fetch(endpointBE + `/animal/delete-animal/${animalId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Lỗi khi xóa vật nuôi: ${response.statusText}`);
+      }
+    } catch (error) {
+      console.error('Error deleting Animal:', error);
+      throw error; // Ném lỗi để xử lý trong UI nếu cần
+    }
+  };
+  
