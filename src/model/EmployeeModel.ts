@@ -13,6 +13,7 @@ class EmployeeModel{
     age : number;
     nameRole : string;
     joinDate : LocalDate;
+    salary : number;
     constructor(employeeId : number,
         fullName : string,
         username : string,
@@ -22,7 +23,8 @@ class EmployeeModel{
         age : number,
         joinDate : LocalDate,
         email : string,
-        nameRole : string
+        nameRole : string,
+        salary : number
         ){
             this.employeeId=employeeId;
             this.fullName=fullName;
@@ -33,7 +35,8 @@ class EmployeeModel{
             this.age=age;
             this.joinDate=joinDate;
             this.email=email;
-            this.nameRole=nameRole
+            this.nameRole=nameRole;
+            this.salary=salary;
         }
 }
 export default EmployeeModel;

@@ -7,12 +7,19 @@ import { useDataContext } from '../utils/DataContext';
 import { getIdUserByToken } from '../utils/JwtService';
 import { getAllAnimal } from '../api/AnimalApi';
 import { getAllCrop } from '../api/CropApi';
+import { getAllHarvest } from '../api/HarvestApi';
+import { HarvestModel } from '../model/HarvestModel';
+import { TransactionModel } from '../model/TransactionModel';
+import { getAllTransaction } from '../api/TransactionApi';
 
 
 
 const Cards: React.FC = () => {
   const [animals, setAnimals] = useState<AnimalModel[]>([]);
-  const [crops, setCrops] = useState<CropModel[]>([]);
+  const [harvests, setHarvests] = useState<HarvestModel[]>([]);
+  const [transactions , setTransactions] = useState<TransactionModel[]>([]);
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<null | Error>(null);
   const { fetchData } = useDataContext(); // Lấy hàm từ context
@@ -40,9 +47,9 @@ const Cards: React.FC = () => {
       });
 
     // Fetch Crop Data
-    getAllCrop(userId)
+    getAllHarvest(userId)
       .then((response) => {
-        setCrops(response);
+        setHarvests(response);
         setLoading(false);
       })
       .catch((error) => {
@@ -50,7 +57,39 @@ const Cards: React.FC = () => {
         setError(error);
       });
   }, [userId,fetchData]);
-  const totalCrops = crops.reduce((sum, crop) => sum + crop.quantity, 0);
+
+  useEffect(() => {
+    getAllTransaction(userId)
+      .then((response) => {
+        setTransactions(response);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setError(error);
+        setLoading(false);
+      });
+  }, [userId]);
+
+  const filterTransactionsByMonthAndYear = () => {
+    return transactions.filter(transaction => {
+      const transactionDate = new Date(transaction.date.toString());
+      return (
+        transactionDate.getMonth() === selectedMonth &&
+        transactionDate.getFullYear() === selectedYear
+      );
+    });
+  };
+
+  const filteredTransactions = filterTransactionsByMonthAndYear();
+
+  const totalIncome = filteredTransactions
+    .filter(transaction => transaction.type === 'Doanh thu')
+    .reduce((sum, transaction) => sum + transaction.money, 0);
+
+  const totalExpense = filteredTransactions
+    .filter(transaction => transaction.type === 'Chi phí')
+    .reduce((sum, transaction) => sum + transaction.money, 0);
+  const totalharvest = harvests.reduce((sum, harvest) => sum + harvest.quantity, 0);
 
   // Giả sử số lượng vật nuôi là độ dài của mảng animals
   const totalAnimals = animals.reduce((sum, animal) => sum + animal.quantity, 0);
@@ -69,7 +108,7 @@ const Cards: React.FC = () => {
         <Card className="mb-4 text-center">
           <Card.Body>
             <Card.Title><FaSeedling className="text-success" /> Sản lượng cây trồng</Card.Title>
-            <Card.Text className="display-4">{totalCrops} kg</Card.Text>
+            <Card.Text className="display-4">{totalharvest} kg</Card.Text>
           </Card.Body>
         </Card>
       </Col>
@@ -77,7 +116,7 @@ const Cards: React.FC = () => {
         <Card className="mb-4 text-center">
           <Card.Body>
             <Card.Title><FaDollarSign className="text-warning" /> Doanh thu gần đây</Card.Title>
-            <Card.Text className="display-4">$15,000</Card.Text>
+            <Card.Text className="display-4">{(totalIncome/25000).toLocaleString()} $</Card.Text>
           </Card.Body>
         </Card>
       </Col>

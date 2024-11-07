@@ -5,6 +5,7 @@ import { addTask, deleteTask, getAllTask } from '../../api/TaskApi';
 import TaskModel from '../../model/TaskModel';
 import { TaskModal } from './TaskModal';
 import { toast } from 'react-toastify';
+import { useDataContext } from '../../utils/DataContext';
 
 const TaskList: React.FC = () => {
   const [tasks, setTasks] = useState<TaskModel[]>([]);
@@ -21,14 +22,14 @@ const TaskList: React.FC = () => {
     animalName: '',
     cropName: '',
   });
-
+  const { fetchData } = useDataContext();
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
   const userId = getIdUserByToken(); // Lấy userId từ token
 
   const handleAddTask = () => {
-    addTask(newTask)
+    addTask(newTask, userId)
       .then(() => {
         alert('Thêm công việc thành công')
         // Gọi lại API để lấy danh sách mới sau khi thêm task
@@ -46,6 +47,7 @@ const TaskList: React.FC = () => {
           cropName: '',
         }); // Đặt lại giá trị newTask
         setShow(false); // Ẩn modal sau khi thêm
+        fetchData();
       })
       .catch((error) => {
         alert(`Lỗi khi thêm nhiệm vụ: ${error.message}`);
@@ -87,7 +89,7 @@ const TaskList: React.FC = () => {
     <Container className="my-4">
       <Row className="mb-4">
         <Col>
-          <h1 className="text-center">Quản lý Task List</h1>
+          <h1 className="text-center">Danh sách công việc</h1>
         </Col>
       </Row>
       <Row className="mb-3">
@@ -99,7 +101,7 @@ const TaskList: React.FC = () => {
       </Row>
       <Table striped bordered hover>
         <thead>
-          <tr>
+          <tr className='text-center'>
             <th>Tên nhiệm vụ</th>
             <th>Mô tả</th>
             <th>Hạn chót</th>
@@ -109,7 +111,7 @@ const TaskList: React.FC = () => {
         </thead>
         <tbody>
           {tasks.map((task) => (
-            <tr key={task.taskId}>
+            <tr key={task.taskId} className='text-center'>
               <td>{task.title}</td>
               <td>{task.description}</td>
               <td>{new Date(task.date).toLocaleDateString()}</td>
@@ -117,16 +119,20 @@ const TaskList: React.FC = () => {
                 {task.status === 1 ? 'Hoàn thành' : 'Chưa hoàn thành'}
               </td>
               <td>
-                <Button variant="danger" onClick={() => handleDeleteTask(task.taskId)}>
-                  Xóa
-                </Button>
+                {task.status === 1 ? (
+                  <Button variant="success" onClick={() => handleDeleteTask(task.taskId)}>
+                    Xác nhận
+                  </Button>
+                ) : (
+                  <Button variant="danger" onClick={() => handleDeleteTask(task.taskId)}>
+                    Xóa
+                  </Button>
+                )}
               </td>
             </tr>
           ))}
         </tbody>
       </Table>
-
-      {/* Modal để thêm nhiệm vụ mới */}
       <TaskModal
         show={show}
         setNewTask={setNewTask}

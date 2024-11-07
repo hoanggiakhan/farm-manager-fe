@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faList, faClipboard, faBoxes, faMapMarkedAlt, faSeedling, faQuestionCircle, faUsers, faBriefcase } from '@fortawesome/free-solid-svg-icons';
+import { faList, faClipboard, faBoxes, faMapMarkedAlt, faSeedling, faQuestionCircle, faUsers, faBriefcase, faClock, faUserCheck } from '@fortawesome/free-solid-svg-icons';
 import './Slidebar.css'; // Import file CSS
 import { Link } from 'react-router-dom';
 import { useDataContext } from '../../utils/DataContext';
@@ -43,11 +43,11 @@ export const Sidebar: React.FC = () => {
             <i className="fas fa-seedling"></i> Farm Management
           </Link>
         </li>
-        <li>
+        {/* <li>
           <Link to="position">
             <FontAwesomeIcon icon={faBriefcase} className="me-2" /> Danh sách vị trí
           </Link>
-        </li>
+        </li> */}
         <li>
           <Link to="tasklist">
             <FontAwesomeIcon icon={faList} className="me-2" /> Danh sách công việc
@@ -61,6 +61,12 @@ export const Sidebar: React.FC = () => {
         <li>
           <Link to="inventory">
             <FontAwesomeIcon icon={faBoxes} className="me-2" /> Quản lý kho
+          </Link>
+        </li>
+        <li>
+          <Link to="attendance">
+            <FontAwesomeIcon icon={faUserCheck} className="me-2" />
+            Quản lý công/ca
           </Link>
         </li>
         <li>

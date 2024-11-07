@@ -1,64 +1,78 @@
-// src/components/About.tsx
 import React from 'react';
-import './About.css';
+import { Container, Row, Col, Image, Button } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 
-interface TeamMember {
-  name: string;
-  position: string;
-  description: string;
-}
-
-const About: React.FC = () => {
-  const teamMembers: TeamMember[] = [
-    {
-      name: 'Nguyễn Văn A',
-      position: 'Giám đốc điều hành',
-      description: 'Người sáng lập nông trại với hơn 20 năm kinh nghiệm trong lĩnh vực nông nghiệp.'
-    },
-    {
-      name: 'Trần Thị B',
-      position: 'Quản lý sản xuất',
-      description: 'Chuyên gia về sản xuất và quy hoạch, giúp đảm bảo chất lượng nông sản.'
-    },
-    {
-      name: 'Lê Văn C',
-      position: 'Quản lý nhân sự',
-      description: 'Phụ trách các hoạt động nhân sự và phát triển đội ngũ nhân viên.'
-    }
-  ];
-
+const FarmIntro: React.FC = () => {
   return (
-    <div className="about-container">
-      <section className="intro-section">
-        <h2>Giới thiệu về Nông trại</h2>
-        <p>
-          Nông trại chúng tôi được thành lập vào năm 2005 với mục tiêu mang đến nông sản sạch và an toàn cho người tiêu dùng.
-          Với hơn 15 năm hoạt động, chúng tôi đã xây dựng một hệ thống nông trại hiện đại kết hợp giữa truyền thống và công nghệ tiên tiến.
-        </p>
-      </section>
+    <Container fluid style={{ padding: '3rem 0', backgroundColor: '#f9fafb' }}>
+      <Row className="align-items-center text-center text-md-start">
+        <Col md={6} className="order-2 order-md-1">
+          <h1 style={{ fontWeight: 'bold', color: '#4caf50' }}>
+            Chào mừng đến với Nông Trại Xanh
+          </h1>
+          <p style={{ color: '#555', fontSize: '1.1rem' }}>
+            Trải nghiệm cuộc sống nông thôn đích thực với các hoạt động trồng trọt, chăm sóc vật nuôi,
+            và tận hưởng không gian trong lành. Tất cả đều được thực hiện tự nhiên và bền vững.
+          </p>
+          <Button
+            variant="success"
+            size="lg"
+            className="mt-3"
+            style={{ backgroundColor: '#4caf50', borderColor: '#4caf50' }}
+          >
+           <Link to={'/app/dashboard'} className='nav-link'> Khám phá ngay</Link>
+          </Button>
+        </Col>
+        <Col md={6} className="order-1 order-md-2">
+          <Image
+             src={'./../../../image/farm.webp'}
+            fluid
+            rounded
+            style={{ maxWidth: '100%', height: 'auto' }}
+          />
+        </Col>
+      </Row>
 
-      <section className="mission-section">
-        <h2>Lịch sử và Sứ mệnh</h2>
-        <p>
-          Chúng tôi bắt đầu từ một trang trại nhỏ, nhưng nhờ vào nỗ lực không ngừng nghỉ, hiện nay chúng tôi đã mở rộng quy mô lên đến hàng trăm hecta.
-          Sứ mệnh của chúng tôi là cung cấp nông sản sạch, an toàn và bền vững, góp phần nâng cao chất lượng cuộc sống của cộng đồng.
-        </p>
-      </section>
-
-      <section className="team-section">
-        <h2>Đội ngũ quản lý</h2>
-        <div className="team-members">
-          {teamMembers.map((member, index) => (
-            <div key={index} className="team-member">
-              <h3>{member.name}</h3>
-              <p><strong>Chức vụ:</strong> {member.position}</p>
-              <p>{member.description}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-    </div>
+      <Row className="mt-5">
+        <Col md={4} className="text-center">
+          <Image
+             src={'./../../../image/crop.webp'}
+            roundedCircle
+            width="150"
+            style={{ marginBottom: '1rem' }}
+          />
+          <h3 style={{ color: '#4caf50', fontWeight: 600 }}>Nông sản sạch</h3>
+          <p style={{ color: '#555' }}>
+            Trồng trọt không hóa chất và thu hoạch theo mùa, mang đến sản phẩm an toàn và giàu dinh dưỡng.
+          </p>
+        </Col>
+        <Col md={4} className="text-center">
+          <Image
+              src={'./../../../image/animal.webp'}
+            roundedCircle
+            width="150"
+            style={{ marginBottom: '1rem' }}
+          />
+          <h3 style={{ color: '#4caf50', fontWeight: 600 }}>Vật nuôi hữu cơ</h3>
+          <p style={{ color: '#555' }}>
+            Chăm sóc vật nuôi một cách tự nhiên, không sử dụng thuốc tăng trưởng để tạo ra các sản phẩm chất lượng cao.
+          </p>
+        </Col>
+        <Col md={4} className="text-center">
+          <Image
+             src={'./../../../image/power1.webp'}
+            roundedCircle
+            width="150"
+            style={{ marginBottom: '1rem' }}
+          />
+          <h3 style={{ color: '#4caf50', fontWeight: 600 }}>Năng lượng xanh</h3>
+          <p style={{ color: '#555' }}>
+            Sử dụng năng lượng tái tạo và phương pháp bền vững nhằm bảo vệ môi trường và hệ sinh thái.
+          </p>
+        </Col>
+      </Row>
+    </Container>
   );
 };
 
-export default About;
+export default FarmIntro;

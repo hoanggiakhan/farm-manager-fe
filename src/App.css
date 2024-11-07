@@ -24,14 +24,26 @@
   color: white;
 }
 .content {
-  margin-left: 250px; /* Khoảng cách từ trái đến nội dung chính sau khi có sidebar */
-  margin-top: 15px; /* Khoảng cách từ trên đến nội dung chính sau khi có navbar */
+  margin-left: 250px;
+  margin-top: 15px;
   padding: 20px;
+}
+
+.no-sidebar .content {
+  display: flex;
+  justify-content: center; /* Căn giữa nội dung */
+  margin-left: 0; /* Loại bỏ margin-left khi không có Sidebar */
 }
 
 .main-content {
   padding-top: 20px;
+  width: 100%;
 }
+
+.no-sidebar .main-content {
+  max-width: 80%; /* Đặt giới hạn chiều rộng khi không có Sidebar */
+}
+
 
 .App-link {
   color: #61dafb;

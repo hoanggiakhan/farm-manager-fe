@@ -53,15 +53,30 @@ export function getIdUserByToken() {
    }
 }
 
+// export function getRoleByToken() {
+//    const token = localStorage.getItem('token');
+//    if (token) {
+//       const decodedToken = jwtDecode(token) as JwtPayload;
+//       return decodedToken.role;
+//    }
+// }
 export function getRoleByToken() {
-   const token = localStorage.getItem('token');
-   if (token) {
-      const decodedToken = jwtDecode(token) as JwtPayload;
-      return decodedToken.role;
-   }
-}
-
+   const token = localStorage.getItem("token");
+   return token ? (jwtDecode<JwtPayload>(token).role || null) : null;
+ }
+ 
 export function logout(navigate: any) {
    navigate("/");
    localStorage.removeItem('token');
 }
+
+// export function login(token: string) {
+//    localStorage.setItem("token", token);
+//    window.dispatchEvent(new CustomEvent("tokenChanged")); // Phát sự kiện khi đăng nhập
+//  }
+ 
+//  export function logout(navigate : any) {
+//    navigate("/");
+//    localStorage.removeItem("token");
+//    window.dispatchEvent(new CustomEvent("tokenChanged")); // Phát sự kiện khi đăng xuất
+//  }

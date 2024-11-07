@@ -32,7 +32,7 @@ const Calendar: React.FC = () => {
   return (
     <Table striped bordered hover>
       <thead>
-        <tr>
+        <tr className='text-center'>
           <th>Công việc</th>
           <th>Tên cây/vật nuôi</th>
           <th>Ngày</th>
@@ -44,7 +44,7 @@ const Calendar: React.FC = () => {
             // const isOverdue = new Date(task.dueDate) < new Date() && task.status !== 'Hoàn thành';
             return (
               // style={{ backgroundColor: isOverdue ? '#f8d7da' : 'white' }}
-              <tr key={task.taskId}>
+              <tr key={task.taskId} className='text-center'>
                 <td>{task.title}</td>
                 <td>{task.cropName===null && task.animalName===null ? ' ' : task.cropName === null ? `${task.animalName}` : `${task.cropName}`}</td>
                 <td>{new Date(task.date).toLocaleDateString()}</td>

@@ -4,15 +4,15 @@ class TaskModel{
     description : string;
     date : string;
     status : number;
-   nameEmployee : string;
-   animalName ?: string;
-   cropName ?: string;
-   constructor(title : string,
+    nameEmployee : string;
+    animalName ?: string;
+    cropName ?: string;
+    constructor(title : string,
     description : string,
-   date : string,
+    date : string,
     status : number,
-   nameEmployee : string,
-   taskId : number
+    nameEmployee : string,
+    taskId : number
 ){
     this.title=title;
     this.date=date;

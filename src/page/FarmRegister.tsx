@@ -4,6 +4,7 @@ import { FarmRequest } from '../model/FarmRequest';
 import { addFarm } from '../api/FarmApi';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { useDataContext } from '../utils/DataContext';
 
 const FarmRegistrationForm: React.FC = () => {
     const navigation = useNavigate();
@@ -17,7 +18,7 @@ const FarmRegistrationForm: React.FC = () => {
     username: '',
     password: ''
   });
-
+   const {fetchData} = useDataContext();
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFarm({
@@ -31,6 +32,7 @@ const FarmRegistrationForm: React.FC = () => {
     addFarm(farm)
       .then(() => {
        alert('Đăng ký thành công')
+       fetchData();
         navigation('/login')
       })
       .catch((error) => {

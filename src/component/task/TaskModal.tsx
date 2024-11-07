@@ -86,7 +86,6 @@ export const TaskModal: React.FC<TaskProps> = ({
     return <div>Error: {error.message}</div>;
   }
 
-  // Chuyển đổi dữ liệu thành định dạng phù hợp với react-select
   const employeeOptions = employees.map((employee) => ({
     value: employee.fullName,
     label: employee.fullName,
@@ -152,8 +151,8 @@ export const TaskModal: React.FC<TaskProps> = ({
               onChange={(selectedOption) =>
                 setNewTask({
                   ...newTask,
-                  animalName: selectedOption?.label, // Sử dụng label cho animalName
-                  cropName: '', // Đặt lại cropName khi chọn vật nuôi
+                  animalName: selectedOption?.label, 
+                  cropName: '', 
                 })
               }
               isSearchable
@@ -168,8 +167,8 @@ export const TaskModal: React.FC<TaskProps> = ({
               onChange={(selectedOption) =>
                 setNewTask({
                   ...newTask,
-                  cropName: selectedOption?.label, // Sử dụng label cho cropName
-                  animalName: '', // Đặt lại animalName khi chọn cây trồng
+                  cropName: selectedOption?.label, 
+                  animalName: '', 
                 })
               }
               isSearchable

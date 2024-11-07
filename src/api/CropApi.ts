@@ -112,3 +112,35 @@ export const deleteCrop = async (cropId: number): Promise<void> => {
       throw error; // Ném lỗi để xử lý trong UI nếu cần
     }
   };
+
+  export const updateCrop = async (userId: number, crop: CropModel): Promise<void> => {
+    const endpoint: string = endpointBE + `/crop/update/${crop.cropId}`;
+    try {
+      const response = await fetch(endpoint, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: userId,
+          cropName: crop.cropName,
+          sellPrice: crop.sellPrice,
+          importPrice: crop.importPrice,
+          quantity: crop.quantity,
+          status: crop.status,
+          age: crop.age,
+          plantingDay: crop.plantingDay,
+          acreage: crop.acreage,
+          productivity: crop.productivity,
+          type: crop.type,
+        }),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Failed to update crop: ${response.statusText}`);
+      }
+    } catch (error) {
+      throw new Error(`Failed to update crop: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  };
+  

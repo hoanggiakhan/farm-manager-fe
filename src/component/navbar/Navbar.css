@@ -2,8 +2,13 @@
   background-color: #4CAF50 !important; /* Màu xanh lá cây cho nông trại */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   z-index: 1000; /* Navbar sẽ nằm trên các phần khác */
-  width: calc(100% - 250px); /* Đặt độ rộng để không đè lên sidebar */
+  width: calc(100% - 250px); /* Mặc định đặt độ rộng để không đè lên sidebar */
   margin-left: 250px; /* Dịch sang phải bằng đúng độ rộng của sidebar */
+}
+
+.custom-navbar.full-width {
+  width: 100%; /* Chiếm toàn bộ chiều ngang khi không có sidebar */
+  margin-left: 0; /* Không cần khoảng trống bên trái */
 }
 
 .nav-link {

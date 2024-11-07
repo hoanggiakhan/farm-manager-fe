@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Form, Button, Container, Row, Col, Table } from "react-bootstrap";
 import { RoleModel } from "../model/RoleModel";
 import { getIdUserByToken } from "../utils/JwtService";
-import { getAllRole } from "../api/FarmApi";
 import { addRole } from "../api/EmployeeApi";
 
 const PositionManagement: React.FC = () => {
@@ -15,18 +14,18 @@ const PositionManagement: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<null | Error>(null);
   const userId = getIdUserByToken();
-  useEffect(() => {
-    setLoading(true);
-    getAllRole(userId)
-      .then((response) => {
-        setPositions(response);
-        setLoading(false);
-      })
-      .catch((error) => {
-        setError(error);
-        setLoading(false); // Gọi setLoading(false) để dừng trạng thái loading
-      });
-  }, [userId]);
+  // useEffect(() => {
+  //   setLoading(true);
+  //   getAllRole(userId)
+  //     .then((response) => {
+  //       setPositions(response);
+  //       setLoading(false);
+  //     })
+  //     .catch((error) => {
+  //       setError(error);
+  //       setLoading(false); // Gọi setLoading(false) để dừng trạng thái loading
+  //     });
+  // }, [userId]);
   
   // const handleAddPosition = () => {
   //   const newPosition: Position = {

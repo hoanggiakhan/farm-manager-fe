@@ -14,6 +14,7 @@ import ItemModel from '../../model/ItemModel';
 import { InventoryModal } from './InventoryModal';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import { useDataContext } from '../../utils/DataContext';
 
 const InventoryManagement: React.FC = () => {
   const navigation = useNavigate();
@@ -25,7 +26,7 @@ const InventoryManagement: React.FC = () => {
   const [items, setItems] = useState<ItemModel[]>([]);
   const [selectedWarehouse, setSelectedWarehouse] = useState<number | null>(null);
   const [showModal, setShowModal] = useState(false);
-
+  const {fetchData} = useDataContext();
   const [newItem, setNewItem] = useState<ItemModel>({
     itemId: 0,
     itemName: '',
@@ -80,11 +81,11 @@ const InventoryManagement: React.FC = () => {
         
         // Đặt kho mới thêm làm kho được chọn
         setSelectedWarehouse(latestInventoryId);
-        
-        toast.success('Thêm kho thành công');
+        fetchData();
+        alert('Thêm kho thành công');
       })
       .catch((error) => {
-        toast.error(`Lỗi khi thêm kho: ${error.message}`);
+        alert(`Lỗi khi thêm kho: ${error.message}`);
       });
   };
 
@@ -107,6 +108,7 @@ const InventoryManagement: React.FC = () => {
           importPrice: 0,
         })
         alert('Thêm sản phẩm thành công');
+        fetchData();
       })
       .catch((error) => {
        alert(`Lỗi khi thêm sản phẩm: ${error.message}`);
@@ -210,7 +212,7 @@ const InventoryManagement: React.FC = () => {
       ) : (
         <Table striped bordered hover responsive>
           <thead className="table-light">
-            <tr>
+            <tr className='text-center'>
               <th>Tên sản phẩm</th>
               <th>Danh mục</th>
               <th>Số lượng</th>
@@ -220,7 +222,7 @@ const InventoryManagement: React.FC = () => {
           </thead>
           <tbody>
             {items.map((item) => (
-              <tr key={item.itemId}>
+              <tr key={item.itemId} className='text-center'>
                 <td>{item.itemName}</td>
                 <td>{item.type}</td>
                 <td>{item.quantity} ({item.unit})</td>

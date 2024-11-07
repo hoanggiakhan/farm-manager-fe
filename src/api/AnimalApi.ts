@@ -1,5 +1,6 @@
 
 import AnimalModel from "../model/AnimalModel";
+import { SellData } from "../model/SellData";
 import { endpointBE } from "../utils/Contants";
 import { request } from "./Request";
 
@@ -36,7 +37,7 @@ export const addAnimal= async (userId: number, animal: AnimalModel): Promise<voi
       });
   
       if (!response.ok) {
-        const errorText = await response.text(); // Lấy nội dung phản hồi
+        const errorText = await response.text(); 
         throw new Error(`Lỗi khi thêm vật nuôi: ${response.statusText}. Chi tiết: ${errorText}`);
       }
     } catch (error) {
@@ -64,3 +65,23 @@ export const addAnimal= async (userId: number, animal: AnimalModel): Promise<voi
     }
   };
   
+
+  export const sellAnimal = async (animalId : number, sellData : SellData , userId : number): Promise<void> => {
+    try {
+        const response = await fetch(`${endpointBE}/animal/sell-animal/${animalId}/${userId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            },
+            body: JSON.stringify(sellData),
+        });
+
+        if (!response.ok) {
+            throw new Error(`Lỗi khi bán vật nuôi: ${response.statusText}`);
+        }
+    } catch (error) {
+        console.error('Error change:', error);
+        throw error; // Ném lỗi để xử lý trong UI nếu cần
+    }
+};

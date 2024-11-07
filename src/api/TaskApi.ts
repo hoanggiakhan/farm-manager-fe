@@ -43,9 +43,9 @@ export async function getAllTask(userId: number): Promise<TaskModel[]> {
 //     }
 //   };
 
-export const addTask = async (task : TaskModel): Promise<void> => {
+export const addTask = async (task : TaskModel , userId : number): Promise<void> => {
     try {
-      const response = await fetch(endpointBE+`/task`, {
+      const response = await fetch(endpointBE+`/task/${userId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

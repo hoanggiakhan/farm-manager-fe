@@ -22,23 +22,23 @@ export const addFarm = async (farm : FarmRequest): Promise<void> => {
   };
 
 
-  export async function getAllRole(userId : number): Promise<RoleModel[]> {
-    const endpoint: string = endpointBE + `/farm/role/${userId}`;
-    try {
-        const response = await request(endpoint);
+//   export async function getAllRole(userId : number): Promise<RoleModel[]> {
+//     const endpoint: string = endpointBE + `/farm/role/${userId}`;
+//     try {
+//         const response = await request(endpoint);
         
-        // Kiểm tra nếu response là một mảng trước khi gọi map
-        if (Array.isArray(response)) {
-            const roleList: RoleModel[] = response.map((roleData: RoleModel) => ({
-                ...roleData,
-            }));
-            return roleList;
-        } else {
-            throw new Error("Unexpected response format");
-        }
-    } catch (error) {
-        console.error("Error fetching roles:", error);
-        throw error;
-    }
-}
+//         // Kiểm tra nếu response là một mảng trước khi gọi map
+//         if (Array.isArray(response)) {
+//             const roleList: RoleModel[] = response.map((roleData: RoleModel) => ({
+//                 ...roleData,
+//             }));
+//             return roleList;
+//         } else {
+//             throw new Error("Unexpected response format");
+//         }
+//     } catch (error) {
+//         console.error("Error fetching roles:", error);
+//         throw error;
+//     }
+// }
   

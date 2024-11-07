@@ -1,150 +1,235 @@
-import React from 'react';
-import { Card, Button, Table, Container } from 'react-bootstrap';
-import jsPDF from 'jspdf';
-import { utils, writeFile } from 'xlsx';
+import React, { useEffect, useState } from "react";
+import { Container, Row, Col, Card, Table, Button } from "react-bootstrap";
+import { Document, Packer, Paragraph} from "docx";
+import { saveAs } from "file-saver";
+import CropModel from "../model/CropModel";
+import AnimalModel from "../model/AnimalModel";
+import { TransactionModel } from "../model/TransactionModel";
+import { getAllCrop } from "../api/CropApi";
+import { getIdUserByToken } from "../utils/JwtService";
+import { useDataContext } from "../utils/DataContext";
+import { getAllAnimal } from "../api/AnimalApi";
+import { getAllTransaction } from "../api/TransactionApi";
 
-const Reports: React.FC = () => {
-  const cropData = [
-    { name: 'Lúa', quantity: 100, area: '10ha' },
-    { name: 'Ngô', quantity: 200, area: '20ha' },
-  ];
+const ReportPage: React.FC = () => {
+  const [animals, setAnimals] = useState<AnimalModel[]>([]);
+  const [crops , setCrops] = useState<CropModel[]>([])
+  const [transactions , setTransactions] = useState<TransactionModel[]>([]);
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<null | Error>(null);
+  const userId = getIdUserByToken();
+  const {fetchData} = useDataContext();
+  // Giả định dữ liệu (thay thế bằng dữ liệu thực tế)
+   // Tải dữ liệu cây trồng
+   useEffect(() => {
+    setLoading(true);
+    getAllCrop(userId)
+      .then((response) => {
+        setCrops(response);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setError(error);
+        setLoading(false);
+      });
+  }, [userId, fetchData]);
 
-  const animalData = [
-    { name: 'Bò', quantity: 50 },
-    { name: 'Gà', quantity: 200 },
-  ];
 
-  const financialData = [
-    { category: 'Doanh thu', amount: 500000 },
-    { category: 'Chi phí', amount: 200000 },
-  ];
+  useEffect(() => {
+    getAllAnimal(userId)
+      .then((response) => {
+        setAnimals(response);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setError(error);
+        setLoading(false);
+      });
+  }, [userId]);
+  useEffect(() => {
+    getAllTransaction(userId)
+      .then((response) => {
+        setTransactions(response);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setError(error);
+        setLoading(false);
+      });
+  }, [userId]);
 
-  const handleExportPDF = () => {
-    const doc = new jsPDF();
-    
-    // Báo cáo cây trồng
-    doc.text("Báo cáo cây trồng", 10, 10);
-    cropData.forEach((crop, index) => {
-      doc.text(`${crop.name} - ${crop.quantity} - ${crop.area}`, 10, 20 + index * 10);
+  const filterTransactionsByMonthAndYear = () => {
+    return transactions.filter(transaction => {
+      const transactionDate = new Date(transaction.date.toString());
+      return (
+        transactionDate.getMonth() === selectedMonth &&
+        transactionDate.getFullYear() === selectedYear
+      );
     });
-
-    // Chuyển trang cho báo cáo động vật
-    doc.addPage();
-    doc.text("Báo cáo vật nuôi", 10, 10);
-    animalData.forEach((animal, index) => {
-      doc.text(`${animal.name} - ${animal.quantity}`, 10, 20 + index * 10);
-    });
-
-    // Chuyển trang cho báo cáo tài chính
-    doc.addPage();
-    doc.text("Báo cáo tài chính", 10, 10);
-    financialData.forEach((finance, index) => {
-      doc.text(`${finance.category} - ${finance.amount}`, 10, 20 + index * 10);
-    });
-
-    doc.save("report_complete.pdf");
   };
 
-  const handleExportExcel = () => {
-    // Cây trồng
-    const cropWs = utils.json_to_sheet(cropData);
-    const animalWs = utils.json_to_sheet(animalData);
-    const financeWs = utils.json_to_sheet(financialData);
+  const filteredTransactions = filterTransactionsByMonthAndYear();
 
-    const wb = utils.book_new();
-    utils.book_append_sheet(wb, cropWs, "Cây trồng");
-    utils.book_append_sheet(wb, animalWs, "Vật nuôi");
-    utils.book_append_sheet(wb, financeWs, "Tài chính");
+  const totalIncome = filteredTransactions
+    .filter(transaction => transaction.type === 'Doanh thu')
+    .reduce((sum, transaction) => sum + transaction.money, 0);
 
-    writeFile(wb, "report_complete.xlsx");
+  const totalExpense = filteredTransactions
+    .filter(transaction => transaction.type === 'Chi phí')
+    .reduce((sum, transaction) => sum + transaction.money, 0);
+
+  const profit = totalIncome - totalExpense;
+
+  const totalAnimalBought = animals.reduce((sum, animal) => sum + animal.quantity, 0);
+  const totalCropBought = crops.reduce((sum, crop) => sum + crop.quantity, 0);
+  const data = {
+    crops: {
+      bought: 100,
+      sold: 80,
+    },
+    animals: {
+      bought: 50,
+      sold: 30,
+    },
+    financial: {
+      income: 20000,
+      expenses: 15000,
+      profit: 5000,
+    },
   };
 
+  const exportToWord = () => {
+    const doc = new Document({
+      sections: [
+        {
+          properties: {},
+          children: [
+            new Paragraph({
+              text: "Báo cáo tháng",
+              heading: "Heading1",
+            }),
+            new Paragraph("Cây trồng:"),
+            new Paragraph(`- Đã mua: ${data.crops.bought}`),
+            new Paragraph(`- Đã bán: ${data.crops.sold}`),
+            new Paragraph("Vật nuôi:"),
+            new Paragraph(`- Đã mua: ${data.animals.bought}`),
+            new Paragraph(`- Đã bán: ${data.animals.sold}`),
+            new Paragraph("Báo cáo tài chính:"),
+            new Paragraph(`- Doanh thu: ${data.financial.income.toLocaleString()}`),
+            new Paragraph(`- Chi phí: ${data.financial.expenses.toLocaleString()}`),
+            new Paragraph(`- Lợi nhuận: ${data.financial.profit.toLocaleString()}`),
+          ],
+        },
+      ],
+    });
+
+    Packer.toBlob(doc).then((blob) => {
+      saveAs(blob, "bao_cao_thang.docx");
+    });
+  };
+  const currentDate = new Date();
+  const month = currentDate.toLocaleString('default', { month: 'long' }); // Tên tháng
+  const year = currentDate.getFullYear(); // Năm
   return (
-    <Container>
-      <h1 className="text-center my-4">Báo cáo</h1>
+    <Container fluid className="mt-4">
+      <h2 className="text-center">Báo Cáo {month}/{year}</h2>
+      <Row className="mt-4">
+        <Col md={6}>
+          <Card>
+            <Card.Header as="h5">Cây trồng</Card.Header>
+            <Card.Body>
+              <Table striped bordered hover responsive>
+                <thead>
+                  <tr>
+                    <th>Loại</th>
+                    <th>Số lượng</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Đã thu hoạch</td>
+                    <td>{data.crops.bought}</td>
+                  </tr>
+                  <tr>
+                    <td>Đã bán</td>
+                    <td>{data.crops.sold}</td>
+                  </tr>
+                </tbody>
+              </Table>
+            </Card.Body>
+          </Card>
+        </Col>
 
-      {/* Báo cáo cây trồng */}
-      <Card className="mb-4 shadow-sm">
-        <Card.Body>
-          <Card.Title className="text-primary">Tổng hợp báo cáo về cây trồng</Card.Title>
-          <Table striped bordered hover variant="light">
-            <thead>
-              <tr>
-                <th>Tên cây trồng</th>
-                <th>Số lượng</th>
-                <th>Diện tích</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cropData.map((crop, index) => (
-                <tr key={index}>
-                  <td>{crop.name}</td>
-                  <td>{crop.quantity}</td>
-                  <td>{crop.area}</td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        </Card.Body>
-      </Card>
+        <Col md={6}>
+          <Card>
+            <Card.Header as="h5">Vật nuôi</Card.Header>
+            <Card.Body>
+              <Table striped bordered hover responsive>
+                <thead>
+                  <tr>
+                    <th>Loại</th>
+                    <th>Số lượng</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Đã mua</td>
+                    <td>{totalAnimalBought}</td>
+                  </tr>
+                  <tr>
+                    <td>Đã bán</td>
+                    <td>{data.animals.sold}</td>
+                  </tr>
+                </tbody>
+              </Table>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
 
-      {/* Báo cáo vật nuôi */}
-      <Card className="mb-4 shadow-sm">
-        <Card.Body>
-          <Card.Title className="text-primary">Tổng hợp báo cáo về vật nuôi</Card.Title>
-          <Table striped bordered hover variant="light">
-            <thead>
-              <tr>
-                <th>Tên vật nuôi</th>
-                <th>Số lượng</th>
-              </tr>
-            </thead>
-            <tbody>
-              {animalData.map((animal, index) => (
-                <tr key={index}>
-                  <td>{animal.name}</td>
-                  <td>{animal.quantity}</td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        </Card.Body>
-      </Card>
+      <Row className="mt-4">
+        <Col md={12}>
+          <Card>
+            <Card.Header as="h5">Báo cáo tài chính</Card.Header>
+            <Card.Body>
+              <Table striped bordered hover responsive>
+                <thead>
+                  <tr>
+                    <th>Loại</th>
+                    <th>Số tiền (VNĐ)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Doanh thu</td>
+                    <td>{totalIncome.toLocaleString()}</td>
+                  </tr>
+                  <tr>
+                    <td>Chi phí</td>
+                    <td>{totalExpense.toLocaleString()}</td>
+                  </tr>
+                  <tr>
+                    <td>Lợi nhuận</td>
+                    <td>{profit.toLocaleString()}</td>
+                  </tr>
+                </tbody>
+              </Table>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
 
-      {/* Báo cáo tài chính */}
-      <Card className="mb-4 shadow-sm">
-        <Card.Body>
-          <Card.Title className="text-primary">Tổng hợp báo cáo về tài chính</Card.Title>
-          <Table striped bordered hover variant="light">
-            <thead>
-              <tr>
-                <th>Chuyên mục</th>
-                <th>Số tiền</th>
-              </tr>
-            </thead>
-            <tbody>
-              {financialData.map((finance, index) => (
-                <tr key={index}>
-                  <td>{finance.category}</td>
-                  <td>{finance.amount}</td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        </Card.Body>
-      </Card>
-
-      {/* Nút xuất */}
-      <div className="text-center mb-4">
-        <Button variant="primary" className="me-2" onClick={handleExportPDF}>
-          Xuất PDF
-        </Button>
-        <Button variant="success" onClick={handleExportExcel}>
-          Xuất Excel
-        </Button>
-      </div>
+      <Row className="mt-4">
+        <Col md={12} className="text-center">
+          <Button variant="success" onClick={exportToWord}>
+            Xuất báo cáo ra Word
+          </Button>
+        </Col>
+      </Row>
     </Container>
   );
 };
 
-export default Reports;
+export default ReportPage;

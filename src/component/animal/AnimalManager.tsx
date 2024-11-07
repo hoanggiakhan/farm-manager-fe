@@ -1,23 +1,30 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, FormControl, InputGroup, Form } from 'react-bootstrap';
-import { deleteAnimal, getAllAnimal } from '../../api/AnimalApi';
+import { Table, Button, FormControl, InputGroup } from 'react-bootstrap';
+import { deleteAnimal, getAllAnimal, sellAnimal } from '../../api/AnimalApi';
 import AnimalModel from '../../model/AnimalModel';
 import { useDataContext } from '../../utils/DataContext';
 import AnimalModal from './AnimalModal';
+import SellAnimalModal from './SellAnimalModal';
 import { getIdUserByToken } from '../../utils/JwtService';
+import { SellData } from '../../model/SellData';
 
 const AnimalManagement: React.FC = () => {
-  const { fetchData } = useDataContext(); // Lấy hàm từ context
+  const { fetchData } = useDataContext();
   const [show, setShow] = useState(false);
+  const [sellModalShow, setSellModalShow] = useState(false);
   const [animals, setAnimals] = useState<AnimalModel[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<null | Error>(null);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
   const [searchTerm, setSearchTerm] = useState('');
   const userId = getIdUserByToken();
+  const [currentAnimal, setCurrentAnimal] = useState<AnimalModel | null>(null);
+  const [sellData, setSellData] = useState<SellData>({ quantity: 0, sellPrice: 0 });
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+  const handleSellClose = () => setSellModalShow(false);
+
   useEffect(() => {
-    // Fetch Animal Data
     getAllAnimal(userId)
       .then((response) => {
         setAnimals(response);
@@ -36,14 +43,14 @@ const AnimalManagement: React.FC = () => {
   if (error) {
     return <div>Error: {error.message}</div>;
   }
-  // Hàm lọc động vật dựa trên từ khóa tìm kiếm
+
   const filteredAnimals = animals.filter(animal => {
     const lowercasedSearchTerm = searchTerm.toLowerCase();
     return (
-      animal.animalName.toLowerCase().includes(lowercasedSearchTerm) ||  // Tìm kiếm theo tên
-      animal.age.toString().includes(lowercasedSearchTerm) ||          // Tìm kiếm theo tuổi
-      (animal.status === 1 && 'Tốt'.toLowerCase().includes(lowercasedSearchTerm)) ||  // Tìm kiếm theo tình trạng sức khỏe
-      (animal.status !== 1 && 'Khá'.toLowerCase().includes(lowercasedSearchTerm))    // Tìm kiếm theo tình trạng sức khỏe
+      animal.animalName.toLowerCase().includes(lowercasedSearchTerm) ||
+      animal.age.toString().includes(lowercasedSearchTerm) ||
+      (animal.status === 1 && 'Tốt'.toLowerCase().includes(lowercasedSearchTerm)) ||
+      (animal.status !== 1 && 'Khá'.toLowerCase().includes(lowercasedSearchTerm))
     );
   });
 
@@ -54,9 +61,7 @@ const AnimalManagement: React.FC = () => {
     }
     deleteAnimal(animalId)
       .then(() => {
-        setAnimals((prevAnimals: AnimalModel[]) => 
-          prevAnimals.filter((animal: AnimalModel) => animal.animalId !== animalId)
-        );
+        setAnimals(prevAnimals => prevAnimals.filter(animal => animal.animalId !== animalId));
         alert('Xóa vật nuôi thành công');
         fetchData();
       })
@@ -65,27 +70,57 @@ const AnimalManagement: React.FC = () => {
       });
   };
 
-  return (
-    <div className="container mt-5">
-      <h1 className="text-center text-success">Quản lý vật nuôi</h1>
+  const handleSellShow = (animal: AnimalModel) => {
+    setCurrentAnimal(animal);
+    setSellData({ quantity: 0, sellPrice: 0 });
+    setSellModalShow(true);
+  };
 
-      {/* Tìm kiếm/Lọc */}
-      <div className="input-group mb-3">
-      <InputGroup className="mb-3" style={{ maxWidth: '450px', margin: '0 auto' }}>
-        <InputGroup.Text>
-          <i className="fas fa-search"></i>
-        </InputGroup.Text>
-        <Form.Control
-          type="text"
-          placeholder="Tìm kiếm theo tên, tuổi hoặc tình trạng sức khỏe"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </InputGroup>
+  const handleConfirmSell = async () => {
+    if (!currentAnimal || !userId) return;
+
+    try {
+      await sellAnimal(currentAnimal.animalId, {
+        quantity: sellData.quantity,
+        sellPrice: sellData.sellPrice
+      }, userId);
+      alert('Đã bán thành công');
+      
+      const updatedAnimals = await getAllAnimal(userId);
+      setAnimals(updatedAnimals);
+      setSellModalShow(false);
+      fetchData();
+
+    } catch (error) {
+      alert(`Lỗi khi bán: ${(error as Error).message}`);
+    }
+  };
+
+  const handleSellDataChange = (field: keyof SellData, value: number) => {
+    setSellData(prevData => ({ ...prevData, [field]: value }));
+  };
+
+  return (
+    <div className="container mt-5" style={{ backgroundColor: '#f8f9fa', borderRadius: '8px', padding: '20px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)' }}>
+      <h1 className="text-center text-primary mb-4">Danh sách vật nuôi</h1>
+
+      <div className="d-flex justify-content-center mb-3">
+        <InputGroup style={{ maxWidth: '450px' }}>
+          <InputGroup.Text>
+            <i className="fas fa-search"></i>
+          </InputGroup.Text>
+          <FormControl
+            type="text"
+            placeholder="Tìm kiếm theo tên, tuổi hoặc tình trạng sức khỏe"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </InputGroup>
       </div>
-      <Table striped bordered hover variant="light">
-        <thead className="table-success">
-          <tr>
+
+      <Table striped bordered hover responsive style={{ backgroundColor: '#fff' }}>
+        <thead className="table-primary text-dark">
+          <tr className='text-center'>
             <th>Tên vật nuôi</th>
             <th>Loại</th>
             <th>Số lượng</th>
@@ -97,33 +132,46 @@ const AnimalManagement: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {filteredAnimals.map(animal => (
-            <tr key={animal.animalId}>
+          {filteredAnimals.map((animal) => (
+            <tr key={animal.animalId} className='text-center'>
               <td>{animal.animalName}</td>
-              <td>{animal.age>=1?'Trưởng thành':'Con non'}</td>
+              <td>{animal.age >= 1 ? 'Trưởng thành' : 'Con non'}</td>
               <td>{animal.quantity}</td>
-              <td>{animal.importPrice.toLocaleString()}</td>
+              <td>{animal.importPrice.toLocaleString()} VND</td>
               <td>{new Date(animal.buyDate.toString()).toLocaleDateString()}</td>
               <td>{animal.age}</td>
-              <td>{animal.status===0?'Tốt':(animal.status===1?'Khá':'Trung bình')}</td>
-              <td>
-                <Button variant="danger" onClick={() => handleDeleteAnimal(animal.animalId)}>
+              <td>{animal.status === 0 ? 'Tốt' : (animal.status === 1 ? 'Khá' : 'Trung bình')}</td>
+              <td className="d-flex gap-2">
+                <Button variant="danger" onClick={() => handleDeleteAnimal(animal.animalId)} style={{ padding: '5px 10px' }}>
                   Xóa
+                </Button>
+                <Button variant="warning" onClick={() => handleSellShow(animal)} style={{ padding: '5px 10px' }}>
+                  Bán
                 </Button>
               </td>
             </tr>
           ))}
         </tbody>
       </Table>
-      <Button variant="success" onClick={handleShow}>
+      <div className="mt-3">
+        <Button variant="success" onClick={handleShow}>
           Thêm vật nuôi mới
         </Button>
-      {/* Modal để thêm vật nuôi mới */}
+      </div>
+
       <AnimalModal
         setShow={setShow}
         setAnimals={setAnimals}
         handleClose={handleClose}
         show={show}
+      />
+
+      <SellAnimalModal
+        show={sellModalShow}
+        handleClose={handleSellClose}
+        sellData={sellData}
+        onSellDataChange={handleSellDataChange}
+        handleSellAnimal={handleConfirmSell}
       />
     </div>
   );

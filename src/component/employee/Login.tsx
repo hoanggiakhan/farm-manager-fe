@@ -46,15 +46,14 @@ const Login: React.FC = () => {
       .then(async (data) => {
         const { jwtToken } = data;
         const decodedToken = jwtDecode(jwtToken) as JwtPayload;
-        // Kiểm tra xem tài khoản kích hoạt chư
         alert("Đăng nhâp thành công");
         setLoggedIn(true); // Đã đăng nhập
         localStorage.setItem("token", jwtToken);
         // Kiểm tra role để chuyển về link
-        if (decodedToken.role === "Chủ nông trại") {
+        if (decodedToken.role === "ADMIN") {
           navigation("/app/dashboard");
         } else {
-          navigation("/app");
+          navigation("/app/tasks");
         }
       })
       .catch((error) => {

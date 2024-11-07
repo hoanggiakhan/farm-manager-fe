@@ -61,7 +61,7 @@ const EmployeeManagement: React.FC = () => {
   const handleEditEmployee = (employee: EmployeeModel) => {
     setSelectedEmployee(employee);
     setShowEditModal(true);
-  };
+  };  
   const handleShowModal = ()=>{
     setShowEditModal(true);
   }
@@ -74,8 +74,8 @@ const EmployeeManagement: React.FC = () => {
 
   return (
     <div className="container mt-5">
-      <h1 className="text-center text-primary">Quản lý nhân viên</h1>
-      {/* Thanh tìm kiếm */}
+      <h1 className="text-center text-primary">Danh sách nhân viên</h1>
+    
       <InputGroup className="mb-3" style={{ maxWidth: '400px', margin: '0 auto' }}>
         <InputGroup.Text>
           <i className="fas fa-search"></i>
@@ -90,8 +90,7 @@ const EmployeeManagement: React.FC = () => {
 
       <Table striped bordered hover variant="light">
         <thead className="table-primary">
-          <tr>
-          <th>Mã nhân viên</th>
+          <tr className='text-center'>
             <th>Tên nhân viên</th>
             <th>Chức vụ</th>
             <th>Tuổi</th>
@@ -103,8 +102,7 @@ const EmployeeManagement: React.FC = () => {
         </thead>
         <tbody>
           {filteredEmployees.map((employee, index) => (
-            <tr key={index}>
-                <td>{employee.employeeId}</td>
+            <tr key={index} className='text-center'>
               <td>{employee.fullName}</td>
               <td>{employee.nameRole}</td>
               <td>{employee.age}</td>
@@ -123,13 +121,14 @@ const EmployeeManagement: React.FC = () => {
       <Button variant="primary" className="mb-3" onClick={()=>handleShowModal()}>
        Thêm nhân viên
       </Button>
-      {/* Modal chỉnh sửa nhân viên */}
+     
      <AddEmployeeModal
       showEditModal={showEditModal}
       setShowEditModal={setShowEditModal}
       handleCloseAddModal={handleCloseEditModal}
       setEmployees={setEmployees}
       employees={employees}
+      selectedEmployee={selectedEmployee}
      />
     </div>
   );
