@@ -40,7 +40,7 @@ export const Sidebar: React.FC = () => {
       <ul className="sidebar-menu">
         <li>
           <Link to="dashboard" className="nav-link farm-management">
-            <i className="fas fa-seedling"></i> Farm Management
+            <i className="fas fa-seedling"></i> Quản lý nông trại
           </Link>
         </li>
         {/* <li>
@@ -69,7 +69,7 @@ export const Sidebar: React.FC = () => {
             Quản lý công/ca
           </Link>
         </li>
-        <li>
+        {/* <li>
           <Link to="farmarea">
             <FontAwesomeIcon icon={faMapMarkedAlt} className="me-2" /> Khu vực nông trại
           </Link>
@@ -83,7 +83,7 @@ export const Sidebar: React.FC = () => {
           <Link to="support">
             <FontAwesomeIcon icon={faQuestionCircle} className="me-2" /> Hỗ trợ
           </Link>
-        </li>
+        </li> */}
       </ul>
       <div className="statistics text-center">
         <hr className="divider" />

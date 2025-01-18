@@ -80,7 +80,7 @@ const MyRoutes = () => {
               <Route path='attendance' element={<AttendanceTable/>} />
               </>
             )}
-            <Route path="about" element={<FarmIntro />} />
+            {/* <Route path="about" element={<FarmIntro />} /> */}
             <Route path="notifications" element={<Notifications />} />
             <Route path="support" element={<Support />} />
             <Route path="profile" element={<UserProfile />} />

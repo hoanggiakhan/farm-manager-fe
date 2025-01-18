@@ -104,7 +104,7 @@ const EmployeeManagement: React.FC = () => {
           {filteredEmployees.map((employee, index) => (
             <tr key={index} className='text-center'>
               <td>{employee.fullName}</td>
-              <td>{employee.nameRole}</td>
+              <td>{employee.nameRole === "EMPLOYEE" ? 'Chủ nôn trại' : 'Nhân viên'}</td>
               <td>{employee.age}</td>
               <td>{employee.address}</td>
               <td>{employee.phoneNumber}</td>

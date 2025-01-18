@@ -105,7 +105,7 @@ const EmployeeAttendanceTable: React.FC = () => {
                         {employees.map((employee) => (
                             <tr key={employee.employeeId} className="text-center">
                                 <td>{employee.fullName}</td>
-                                <td>{employee.nameRole}</td>
+                                <td>{employee.nameRole === 'EMPLOYEE' ? 'Chủ nông trại' : 'Nhân viên'}</td>
                                 <td>{employee.salary.toLocaleString()}</td>
                                 <td>
                                     <Button

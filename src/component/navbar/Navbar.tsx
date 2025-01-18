@@ -56,7 +56,7 @@ const NavbarComponent: React.FC<NavbarProps> = ({ className }) => {
                 <Link to="crops" className="nav-link">Quản lý cây trồng</Link>
                 <Link to="employees" className="nav-link">Quản lý nhân sự</Link>
                 <Link to="finance" className="nav-link">Thống kê tài chính</Link>
-                <Link to="reports" className="nav-link">Báo cáo</Link>
+                {/* <Link to="reports" className="nav-link">Báo cáo</Link> */}
               </>
             ) : (
               <>
@@ -65,7 +65,7 @@ const NavbarComponent: React.FC<NavbarProps> = ({ className }) => {
                 <Link to="support" className="nav-link">Hỗ trợ</Link> {/* Đổi URL nếu cần */}
               </>
             )}
-            <Link to="about" className="nav-link">Giới thiệu</Link>
+            {/* <Link to="about" className="nav-link">Giới thiệu</Link> */}
           </Nav>
           <Nav className="d-flex align-items-center">
             <Link to="notifications" className="icon-link nav-link position-relative mx-2">
